@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  app:
+    user: bun
+    image: oven/bun:1.0.4
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    command: sh -c "bun install && bun start"
+    volumes:
+      - ./:/usr/src/app
+    networks:
+      - ark
+
+  island:
+    # tty: true
+    container_name: asa_island
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./ShooterGame:/opt/arkserver/ShooterGame
+      - /opt/steamcmd
+    ports:
+      # Port for connections from ARK game client
+      - '${SERVER_PORT}:${SERVER_PORT}/udp'
+    networks:
+      - ark
+    deploy:
+      resources:
+        limits:
+          memory: 12g
+    memswap_limit: 16g
+
+networks:
+  ark:
+    driver: bridge

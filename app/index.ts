@@ -13,20 +13,20 @@ const servers: Record<
   theIsland: {
     serverName: 'TheIsland',
     client: new RconClient({
-      host: 'island',
-      password: 'TheAdminPass',
-      port: 32330,
+      host: Bun.env.THE_ISLAND_HOST,
+      password: Bun.env.ARK_ADMIN_PASSWORD,
+      port: Number(Bun.env.THE_ISLAND_PORT),
       ignoreInvalidAuthResponse: false,
     }),
   },
 };
 
-const job = new CronJob(cronUtil.everyMinute, async () => {
-  for (const server of Object.values(servers)) {
-    await server.client.connect();
-    const response = await server.client.sendCommand('listplayers');
-    log.info(response);
-  }
-});
+// const job = new CronJob(cronUtil.everyMinute, async () => {
+for (const server of Object.values(servers)) {
+  await server.client.connect();
+  const response = await server.client.sendCommand('listplayers');
+  log.info(response);
+}
+// });
 
-job.start();
+// job.start();

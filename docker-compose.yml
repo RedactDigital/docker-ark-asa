@@ -13,7 +13,6 @@ services:
       - ark
 
   island:
-    # tty: true
     container_name: asa_island
     build:
       context: .

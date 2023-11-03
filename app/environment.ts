@@ -27,16 +27,6 @@ declare module 'bun' {
 
   interface RCONEnv {
     /**
-     * This defaults to `localhost` if not set.
-     */
-    THE_ISLAND_HOST: string;
-
-    /**
-     * This defaults to `32330` if not set.
-     */
-    THE_ISLAND_PORT: number;
-
-    /**
      * This defaults to `TheAdminPass` if not set.
      */
     ARK_ADMIN_PASSWORD: string;

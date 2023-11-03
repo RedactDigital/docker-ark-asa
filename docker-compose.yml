@@ -11,22 +11,32 @@ services:
       - ./:/usr/src/app
     networks:
       - ark
+    environment:
+      ARK_ADMIN_PASSWORD: ab89EBHAEh5b
 
   island:
     container_name: asa_island
     build:
       context: .
       dockerfile: Dockerfile
-    env_file:
-      - .env
     volumes:
       - ./ShooterGame:/opt/arkserver/ShooterGame
       - /opt/steamcmd
     ports:
-      # Port for connections from ARK game client
-      - '${SERVER_PORT}:${SERVER_PORT}/udp'
+      - 7777:7777/udp
     networks:
       - ark
+    environment:
+      ASA_APPID: 2430930
+      RCON_PORT: 27020
+      MAP: TheIsland_WP
+      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
+      MAX_PLAYERS: 70
+      DISABLE_BATTLEYE: 1
+      # SERVER_PASSWORD:
+      ARK_ADMIN_PASSWORD: ab89EBHAEh5b
+      ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -EnableIdlePlayerKick -ServerRCONOutputTribeLogs -gameplaylogging'
     deploy:
       resources:
         limits:

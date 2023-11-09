@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia';
 import { swagger } from '@elysiajs/swagger';
+import { cors } from '@elysiajs/cors';
 import log from 'utils/log-utils.ts';
 import { sequelize } from 'models/index-models.ts';
 import authRoutes from 'root/routes/auth-routes.ts';
@@ -8,6 +9,7 @@ await sequelize.authenticate();
 const app = new Elysia();
 
 app
+  .use(cors())
   .use(
     swagger({
       path: '/swagger',

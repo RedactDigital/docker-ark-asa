@@ -32,10 +32,47 @@ declare module 'bun' {
     ARK_ADMIN_PASSWORD: string;
   }
 
-  export interface Env extends LogEnv, RCONEnv {
+  interface DatabaseEnv {
+    /**
+     * This defaults to `localhost` if not set.
+     */
+    DATABASE_HOST?: string;
+
+    /**
+     * This defaults to `3306` if not set.
+     */
+    DATABASE_PORT?: number;
+
+    /**
+     * This defaults to `root` if not set.
+     */
+    DATABASE_USERNAME?: string;
+
+    /**
+     * This defaults to `root` if not set.
+     */
+    DATABASE_PASSWORD?: string;
+
+    /**
+     * This defaults to `elysia` if not set.
+     */
+    DATABASE_NAME: string;
+  }
+
+  interface PasswordEnv {
+    SALT_ROUNDS?: number;
+  }
+
+  interface APIKeysEnv {
+    STEAM_API_KEY: string;
+  }
+
+  export interface Env extends LogEnv, RCONEnv, DatabaseEnv, APIKeysEnv {
     /**
      * This defaults to `development` if not set.
      */
     NODE_ENV?: string;
+
+    APP_PORT?: number;
   }
 }

@@ -1,26 +1,33 @@
-import { RconClient } from 'rconify';
+import { Elysia } from 'elysia';
+import { swagger } from '@elysiajs/swagger';
 import log from 'utils/log-utils.ts';
+import { sequelize } from 'models/index-models.ts';
+import authRoutes from 'root/routes/auth-routes.ts';
 
-const servers: Record<
-  string,
-  {
-    serverName: string;
-    client: RconClient;
-  }
-> = {
-  theIsland: {
-    serverName: 'TheIsland',
-    client: new RconClient({
-      host: 'island',
-      password: Bun.env.ARK_ADMIN_PASSWORD,
-      port: 27020,
-      ignoreInvalidAuthResponse: false,
+await sequelize.authenticate();
+const app = new Elysia();
+
+app
+  .use(
+    swagger({
+      path: '/swagger',
+      autoDarkMode: true,
+      documentation: {
+        info: {
+          title: 'Yinzers.io',
+          description: 'Yinzers.io API Documentation',
+          version: '1.0.0',
+        },
+        tags: [
+          {
+            name: 'Auth',
+            description: 'Authentication routes',
+          },
+        ],
+      },
     }),
-  },
-};
+  )
+  .group(<''>'/auth', authRoutes)
+  .listen(Bun.env.APP_PORT ?? 5000);
 
-for (const server of Object.values(servers)) {
-  await server.client.connect();
-  const response = await server.client.sendCommand('listplayers');
-  log.info(response);
-}
+if (app.server) log.info(`🦊 Elysia is running at ${app.server.hostname}:${app.server.port}`);

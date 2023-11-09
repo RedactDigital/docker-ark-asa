@@ -21,11 +21,15 @@
   "language": "en",
   // words - list of words to be always considered correct
   "words": [
+    "APIV",
     "ddsource",
     "ddtags",
+    "Elysia",
+    "elysiajs",
     "lockb",
     "rconify",
-    "rizzardi"
+    "rizzardi",
+    "Yinzers"
   ],
   /**
    * flagWords - list of words to be always considered incorrect

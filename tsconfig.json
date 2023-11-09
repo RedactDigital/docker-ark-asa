@@ -24,6 +24,9 @@
     "paths": {
       "utils/*": ["./app/utils/*"],
       "config/*": ["./app/config/*"],
+      "models/*": ["./app/database/models/*"],
+      "types/*": ["./app/types/*"],
+      "controllers/*": ["./app/controllers/*"],
       "root/*": ["./app/*"]
     },
     "sourceMap": false,
@@ -49,7 +52,8 @@
     "allowUnusedLabels": false,
     "exactOptionalPropertyTypes": true,
     "noUncheckedIndexedAccess": true,
-    "strictBindCallApply": true
+    "strictBindCallApply": true,
+    "experimentalDecorators": true
   },
   "include": ["app/**/*"]
 }

@@ -38,33 +38,33 @@ services:
       # SERVER_PASSWORD:
       ARK_ADMIN_PASSWORD: ab89EBHAEh5b
       ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
-      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -EnableIdlePlayerKick -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog -servergamelogincludetribelogs'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -EnableIdlePlayerKick -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog'
     deploy:
       resources:
         limits:
           memory: 12g
     memswap_limit: 16g
 
-  db:
-    image: mysql:8.0
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: app
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_PASSWORD: password
-      MYSQL_USER: app
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      interval: 5s
-      timeout: 30s
-      retries: 3
-      start_period: 5s
-    ports:
-      - 3306:3306
-    networks:
-      - ark
+  # db:
+  #   image: mysql:8.0
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_DATABASE: app
+  #     MYSQL_ROOT_PASSWORD: password
+  #     MYSQL_PASSWORD: password
+  #     MYSQL_USER: app
+  #     SERVICE_TAGS: dev
+  #     SERVICE_NAME: mysql
+  #   healthcheck:
+  #     test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+  #     interval: 5s
+  #     timeout: 30s
+  #     retries: 3
+  #     start_period: 5s
+  #   ports:
+  #     - 3306:3306
+  #   networks:
+  #     - ark
 
 networks:
   ark:

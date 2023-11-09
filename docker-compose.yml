@@ -31,6 +31,7 @@ services:
     environment:
       ASA_APPID: 2430930
       RCON_PORT: 27020
+      SERVER_PORT: 7777
       SERVER_MAP: TheIsland_WP
       SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
       MAX_PLAYERS: 70

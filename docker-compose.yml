@@ -2,6 +2,8 @@ version: '3.7'
 
 services:
   # app:
+  #   depends_on:
+  #     - db
   #   user: bun
   #   image: oven/bun:1.0.4
   #   restart: unless-stopped
@@ -26,6 +28,7 @@ services:
       - /opt/steamcmd
     ports:
       - 7777:7777/udp
+      - 27020:27020/tcp
     networks:
       - ark
     environment:
@@ -62,6 +65,8 @@ services:
   #     timeout: 30s
   #     retries: 3
   #     start_period: 5s
+  #   volumes:
+  #     - ./storage/mysql:/var/lib/mysql
   #   ports:
   #     - 3306:3306
   #   networks:

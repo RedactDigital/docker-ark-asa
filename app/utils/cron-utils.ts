@@ -301,7 +301,13 @@ class CronHelper implements CronUtilInterface {
    * @param time - '21:15'
    * @param dayOfMonth - '21' (21st day of the month)
    */
-  everyMonth = async ({ time, dayOfMonth }: { time?: `${Hours}:${Minutes}`; dayOfMonth?: DayOfMonth }): Promise<string> => {
+  everyMonth = async ({
+    time,
+    dayOfMonth,
+  }: {
+    time?: `${Hours}:${Minutes}`;
+    dayOfMonth?: DayOfMonth;
+  }): Promise<string> => {
     let expression = '0 0 0 1 * *';
     if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth); // eslint-disable-line
     if (time) expression = this._handleTime(expression, time); // eslint-disable-line
@@ -330,7 +336,13 @@ class CronHelper implements CronUtilInterface {
    * @param {string} time - '21:15'
    * @param {string} dayOfMonth - '21' (21st day of the month)
    */
-  everyQuarter = async ({ time, dayOfMonth }: { time?: `${Hours}:${Minutes}`; dayOfMonth?: DayOfMonth }): Promise<string> => {
+  everyQuarter = async ({
+    time,
+    dayOfMonth,
+  }: {
+    time?: `${Hours}:${Minutes}`;
+    dayOfMonth?: DayOfMonth;
+  }): Promise<string> => {
     let expression = '0 0 0 1 1,4,7,10 *';
     if (dayOfMonth) expression = this._handleDayOfMonth(expression, dayOfMonth); // eslint-disable-line
     if (time) expression = this._handleTime(expression, time); // eslint-disable-line
@@ -344,7 +356,15 @@ class CronHelper implements CronUtilInterface {
    * @param {string} month - '04' (April) or 'apr' (April) or 'april' (April)
    * @param {string} day - '24' (24th day of the month)
    */
-  everyYear = async ({ time, month, day }: { time?: `${Hours}:${Minutes}`; month?: Month | MonthNum; day?: DayOfMonth }): Promise<string> => {
+  everyYear = async ({
+    time,
+    month,
+    day,
+  }: {
+    time?: `${Hours}:${Minutes}`;
+    month?: Month | MonthNum;
+    day?: DayOfMonth;
+  }): Promise<string> => {
     let expression = '0 0 0 1 1 *';
     if (month) expression = this._handleMonth(expression, month); // eslint-disable-line
     if (day) expression = this._handleDayOfMonth(expression, day); // eslint-disable-line
@@ -367,14 +387,18 @@ class CronHelper implements CronUtilInterface {
   };
 
   _handleDayOfMonth = (expression: string, dayOfMonth: DayOfMonth): string => {
-    const [originalSeconds, originalMinutes, originalHours, _originalDayOfMonth, originalMonth, originalDayOfWeek] = expression.split(' ');
+    const [originalSeconds, originalMinutes, originalHours, _originalDayOfMonth, originalMonth, originalDayOfWeek] =
+      expression.split(' ');
     return `${originalSeconds} ${originalMinutes} ${originalHours} ${dayOfMonth} ${originalMonth} ${originalDayOfWeek}`;
   };
 
   _handleTime = (expression: string, time: `${Hours}:${Minutes}`): string => {
     const [hours, minutes] = time.split(':');
-    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, originalMonth, originalDayOfWeek] = expression.split(' ');
-    return `${originalSeconds} ${minutes ?? originalMinutes} ${hours ?? originalHours} ${originalDayOfMonth} ${originalMonth} ${originalDayOfWeek}`;
+    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, originalMonth, originalDayOfWeek] =
+      expression.split(' ');
+    return `${originalSeconds} ${minutes ?? originalMinutes} ${
+      hours ?? originalHours
+    } ${originalDayOfMonth} ${originalMonth} ${originalDayOfWeek}`;
   };
 
   _handleDayOfWeek = (expression: string, dayOfWeek: DayOfWeek | keyof typeof WeekDay): string => {
@@ -383,7 +407,8 @@ class CronHelper implements CronUtilInterface {
      */
     if (dayOfWeek.length > 1) dayOfWeek = WeekDay[dayOfWeek.toLowerCase() as keyof typeof WeekDay]; // eslint-disable-line
 
-    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, originalMonth, _originalDayOfWeek] = expression.split(' ');
+    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, originalMonth, _originalDayOfWeek] =
+      expression.split(' ');
     return `${originalSeconds} ${originalMinutes} ${originalHours} ${originalDayOfMonth} ${originalMonth} ${dayOfWeek}`;
   };
 
@@ -393,7 +418,8 @@ class CronHelper implements CronUtilInterface {
      */
     if (month.length > 2) month = Month[month.toLowerCase() as keyof typeof Month]; // eslint-disable-line
 
-    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, _originalMonth, originalDayOfWeek] = expression.split(' ');
+    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, _originalMonth, originalDayOfWeek] =
+      expression.split(' ');
     return `${originalSeconds} ${originalMinutes} ${originalHours} ${originalDayOfMonth} ${month} ${originalDayOfWeek}`;
   };
 
@@ -407,8 +433,11 @@ class CronHelper implements CronUtilInterface {
       else monthsArray.push(month as MonthNum); // eslint-disable-line
     }
 
-    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, _originalMonth, originalDayOfWeek] = expression.split(' ');
-    return `${originalSeconds} ${originalMinutes} ${originalHours} ${originalDayOfMonth} ${monthsArray.join(',')} ${originalDayOfWeek}`;
+    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, _originalMonth, originalDayOfWeek] =
+      expression.split(' ');
+    return `${originalSeconds} ${originalMinutes} ${originalHours} ${originalDayOfMonth} ${monthsArray.join(
+      ',',
+    )} ${originalDayOfWeek}`;
   };
 
   _getOffset = async (): Promise<string> => {
@@ -418,7 +447,7 @@ class CronHelper implements CronUtilInterface {
        */
       const timezone = await fetch('https://worldtimeapi.org/api/timezone/America/New_York').then(
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        async (res) => <{ utc_offset: string }>await res.json(),
+        async (res) => res.json(),
       );
       /**
        * Sometimes this api might go down (It's a free public api)
@@ -443,7 +472,8 @@ class CronHelper implements CronUtilInterface {
     if (!expression || expression.split(' ').length !== 6) throw new Error('Invalid format provided');
 
     const offset = await this._getOffset();
-    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, originalMonth, originalDayOfWeek] = expression.split(' ');
+    const [originalSeconds, originalMinutes, originalHours, originalDayOfMonth, originalMonth, originalDayOfWeek] =
+      expression.split(' ');
 
     let hours = Number(originalHours) + Number(offset);
     /** We don't want to go over 24 hours */

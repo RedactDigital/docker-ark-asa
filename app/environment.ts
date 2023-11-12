@@ -59,20 +59,26 @@ declare module 'bun' {
     DATABASE_NAME: string;
   }
 
-  interface PasswordEnv {
-    SALT_ROUNDS?: number;
+  interface AuthEnv {
+    SALT_ROUNDS: number;
+    JWT_SECRET: string;
+    JWT_ALGORITHM: string;
   }
 
   interface APIKeysEnv {
     STEAM_API_KEY: string;
   }
 
-  export interface Env extends LogEnv, RCONEnv, DatabaseEnv, APIKeysEnv {
+  export interface Env extends LogEnv, RCONEnv, DatabaseEnv, APIKeysEnv, AuthEnv {
     /**
      * This defaults to `development` if not set.
      */
     NODE_ENV?: string;
 
     APP_PORT?: number;
+
+    API_URL?: string;
+
+    APP_URL?: string;
   }
 }

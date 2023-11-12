@@ -9,24 +9,40 @@ await sequelize.queryInterface.createTable(
       primaryKey: true,
       autoIncrement: true,
     },
+    email: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+    },
     steamId: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     steamName: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    avatar: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    country: {
-      type: DataTypes.STRING,
+      allowNull: true,
     },
     steamUrl: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
+    },
+    avatar: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    verificationCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    verifiedAt: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     createdAt: {
       type: DataTypes.DATE,

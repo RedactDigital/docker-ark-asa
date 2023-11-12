@@ -11,4 +11,9 @@ const config: Options = {
   models: [User],
 };
 
-export const sequelize = new Sequelize(Bun.env.DATABASE_NAME, Bun.env.DATABASE_USERNAME ?? 'app', Bun.env.DATABASE_PASSWORD, config);
+export const sequelize = new Sequelize(
+  Bun.env.DATABASE_NAME,
+  Bun.env.DATABASE_USERNAME ?? 'app',
+  Bun.env.DATABASE_PASSWORD,
+  config,
+);

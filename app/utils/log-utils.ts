@@ -111,7 +111,9 @@ for (const transport of transportTypes) {
       );
       break;
     case 'datadog':
-      if (!process.env.LOG_DATADOG_API_KEY) throw new Error('LOG_DATADOG_API_KEY is not defined in as an environment variable');
+      if (!process.env.LOG_DATADOG_API_KEY) {
+        throw new Error('LOG_DATADOG_API_KEY is not defined in as an environment variable');
+      }
       transportsToUse.push(
         new DatadogWinston({
           apiKey: process.env.LOG_DATADOG_API_KEY,

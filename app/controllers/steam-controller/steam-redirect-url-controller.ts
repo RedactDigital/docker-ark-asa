@@ -4,14 +4,14 @@ import type { ReturnResponse } from 'types/response-types.ts';
 
 export default async (): Promise<ReturnResponse> => {
   const steam = new SteamAuth({
-    realm: 'http://localhost:5000',
-    returnUrl: 'http://localhost:5000/auth/steam/return',
+    realm: Bun.env.APP_URL ?? 'http://localhost:8080',
+    returnUrl: `${Bun.env.APP_URL ?? 'http://localhost:8080'}/steam/return`,
     apiKey: Bun.env.STEAM_API_KEY,
   });
 
   const redirectUrl = await steam.getRedirectUrl();
 
-  if (!redirectUrl) return { success: false, redirectUrl: undefined };
+  if (!redirectUrl) return { success: false };
 
   return {
     success: true,
@@ -20,7 +20,7 @@ export default async (): Promise<ReturnResponse> => {
 };
 
 export const steamRedirectDocs: OpenAPIV3.OperationObject = {
-  tags: ['Auth'],
+  tags: ['Steam'],
   responses: {
     200: {
       description: 'Success',

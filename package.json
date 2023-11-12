@@ -16,6 +16,7 @@
   "author": "Patrick Rizzardi <patrick@redact.digital> (https://redact.digital)",
   "dependencies": {
     "@elysiajs/cors": "^0.7.1",
+    "@elysiajs/jwt": "^0.7.0",
     "@sequelize/core": "alpha",
     "@sequelize/validator.js": "^7.0.0-alpha.33",
     "cron": "^3.1.6",

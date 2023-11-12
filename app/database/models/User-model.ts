@@ -12,20 +12,38 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
 
   @Attribute(DataTypes.STRING)
   @NotNull
-  declare steamId: string;
+  declare email: string;
 
   @Attribute(DataTypes.STRING)
   @NotNull
-  declare steamName: string;
+  set password(value: string) {
+    this.setDataValue(
+      'password',
+      Bun.password.hashSync(value, {
+        algorithm: 'bcrypt',
+        cost: Number(Bun.env.SALT_ROUNDS),
+      }),
+    );
+  }
 
   @Attribute(DataTypes.STRING)
-  @NotNull
-  declare avatar: string;
+  declare steamId: CreationOptional<string>;
+
+  @Attribute(DataTypes.STRING)
+  declare steamName: CreationOptional<string>;
+
+  @Attribute(DataTypes.STRING)
+  declare steamUrl: CreationOptional<string>;
+
+  @Attribute(DataTypes.STRING)
+  declare avatar: CreationOptional<string>;
 
   @Attribute(DataTypes.STRING)
   declare country: CreationOptional<string>;
 
   @Attribute(DataTypes.STRING)
-  @NotNull
-  declare steamUrl: string;
+  declare verificationCode: CreationOptional<string>;
+
+  @Attribute(DataTypes.STRING)
+  declare verifiedAt: CreationOptional<string>;
 }

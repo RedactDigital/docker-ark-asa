@@ -17,7 +17,7 @@ export default async (ctx: Context): Promise<ReturnResponse> => {
 
   const [user] = await User.findOrCreate({
     where: {
-      steamId,
+      id: user.id,
     },
     defaults: {
       steamId,
@@ -36,8 +36,8 @@ export default async (ctx: Context): Promise<ReturnResponse> => {
   };
 };
 
-export const steamAuthDocs: OpenAPIV3.OperationObject = {
-  tags: ['Auth'],
+export const steamLinkDocs: OpenAPIV3.OperationObject = {
+  tags: ['Steam'],
   responses: {
     200: {
       description: 'Success',

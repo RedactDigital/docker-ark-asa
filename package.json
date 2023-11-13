@@ -22,6 +22,7 @@
     "cron": "^3.1.6",
     "datadog-winston": "^1.5.1",
     "dayjs": "^1.11.9",
+    "discord.js": "^14.13.0",
     "elysia": "^0.7.21",
     "mathjs": "^11.9.1",
     "mysql2": "^3.6.3",

@@ -23,14 +23,18 @@ cmd="${cmd}${ARK_EXTRA_OPTS}"
 
 # Server dash options
 ark_flags="-log"
-if [ -n ${DISABLE_BATTLEYE} ]; then 
+if [ -n ${DISABLE_BATTLEYE} ]; then
     ark_flags="${ark_flags} -NoBattlEye"
-else 
+else
     ark_flags="${ark_flags} -BattlEye"
 fi
 
-if [ -n ${MAX_PLAYERS} ]; then 
+if [ -n ${MAX_PLAYERS} ]; then
     ark_flags="${ark_flags} -WinLiveMaxPlayers=${MAX_PLAYERS}"
+fi
+
+if [ -n ${EVENT} ]; then
+    ark_flags="${ark_flags} -ActiveEvent=${EVENT}"
 fi
 
 ark_flags="${ark_flags} ${ARK_EXTRA_DASH_OPTS}"

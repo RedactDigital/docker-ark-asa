@@ -55,5 +55,5 @@
     "strictBindCallApply": true,
     "experimentalDecorators": true
   },
-  "include": ["app/**/*"]
+  "include": ["app/**/*", "discord/**/*"]
 }

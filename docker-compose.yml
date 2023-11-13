@@ -18,6 +18,17 @@ services:
   #   environment:
   #     ARK_ADMIN_PASSWORD: ab89EBHAEh5b
 
+  discord:
+    user: bun
+    image: oven/bun:1.0.4
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    command: sh -c "bun install && bun --watch discord/index.discord.ts"
+    volumes:
+      - ./:/usr/src/app
+    networks:
+      - ark
+
   island:
     container_name: asa_island
     build:

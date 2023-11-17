@@ -1,5 +1,5 @@
 import { DataTypes } from '@sequelize/core';
-import { sequelize } from 'root/database/models/index-models.ts';
+import { sequelize } from 'models/index.ts';
 
 await sequelize.queryInterface.createTable(
   'users',

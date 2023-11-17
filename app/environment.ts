@@ -68,6 +68,7 @@ declare module 'bun' {
   interface APIKeysEnv {
     STEAM_API_KEY: string;
     DISCORD_TOKEN: string;
+    STRIPE_API_KEY: string;
   }
 
   export interface Env extends LogEnv, RCONEnv, DatabaseEnv, APIKeysEnv, AuthEnv {

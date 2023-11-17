@@ -1,3 +1,4 @@
+import { t } from 'elysia';
 import SteamAuth from 'node-steam-openid';
 import type { OpenAPIV3 } from 'openapi-types';
 import type { ReturnResponse } from 'types/response-types.ts';
@@ -5,7 +6,7 @@ import type { ReturnResponse } from 'types/response-types.ts';
 export default async (): Promise<ReturnResponse> => {
   const steam = new SteamAuth({
     realm: Bun.env.APP_URL ?? 'http://localhost:8080',
-    returnUrl: `${Bun.env.APP_URL ?? 'http://localhost:8080'}/steam/return`,
+    returnUrl: `${Bun.env.APP_URL ?? 'http://localhost:8080'}/steam/linkProfile`,
     apiKey: Bun.env.STEAM_API_KEY,
   });
 
@@ -19,33 +20,15 @@ export default async (): Promise<ReturnResponse> => {
   };
 };
 
-export const steamRedirectDocs: OpenAPIV3.OperationObject = {
-  tags: ['Steam'],
-  responses: {
-    200: {
-      description: 'Success',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-              data: {
-                type: 'object',
-                properties: {
-                  redirectUrl: { type: 'string' },
-                },
-              },
-            },
-          },
-          example: {
-            success: true,
-            data: {
-              redirectUrl: 'https://steamcommunity.com/openid/login?...',
-            },
-          },
-        },
-      },
-    },
+export const steamRedirectDocs = {
+  response: t.Object({
+    success: t.Boolean(),
+    data: t.Object({
+      redirectUrl: t.String(),
+    }),
+  }),
+  detail: <OpenAPIV3.OperationObject>{
+    tags: ['Steam'],
+    summary: 'Get steam redirect url',
   },
 };

@@ -6,5 +6,5 @@ import steamLinkController, { steamLinkDocs } from 'controllers/steam-controller
 
 export default (app: Elysia): Elysia =>
   app
-    .get('/redirectUrl', steamRedirectUrlController, { detail: steamRedirectDocs })
-    .get('/linkProfile', steamLinkController, { detail: steamLinkDocs });
+    .get('/redirectUrl', <any>steamRedirectUrlController, steamRedirectDocs)
+    .get('/linkProfile', <any>steamLinkController, steamLinkDocs);

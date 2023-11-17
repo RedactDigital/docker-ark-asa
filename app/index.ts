@@ -4,15 +4,17 @@ import { swagger } from '@elysiajs/swagger';
 import { cors } from '@elysiajs/cors';
 import type { JWTPayloadSpec } from '@elysiajs/jwt';
 import { jwt } from '@elysiajs/jwt';
+import type { User } from 'discord.js';
 import log from 'utils/log-utils.ts';
-import { sequelize } from 'models/index-models.ts';
+import { sequelize } from 'models/index.ts';
 import steamRoutes from 'root/routes/steam-routes.ts';
 import authRoutes from 'root/routes/auth-routes.ts';
 
 await sequelize.authenticate();
-const app = new Elysia();
+export const app = new Elysia();
 
 export interface BunContext extends Context {
+  user: User;
   accessToken: {
     sign: (payload: JWTPayloadSpec) => Promise<string>;
     verify: (payload: string) => Promise<JWTPayloadSpec | false>;
@@ -20,10 +22,16 @@ export interface BunContext extends Context {
 }
 
 app
+  .onStop(() => {
+    log.warn('🦊 Elysia is shutting down...');
+  })
+  .onStart(() => {
+    log.info('🦊 Elysia is starting...');
+  })
   .onError(({ error }) => {
     log.error('Error', error);
   })
-  .use(cors())
+  .use(cors({}))
   .use(
     jwt({
       name: 'accessToken',
@@ -36,8 +44,16 @@ app
   )
   .use(
     swagger({
-      path: '/swagger',
+      path: '/docs',
+      exclude: ['/docs', '/docs/json'],
       autoDarkMode: true,
+      swaggerOptions: {
+        filter: true,
+        syntaxHighlight: {
+          activate: true,
+          theme: 'obsidian',
+        },
+      },
       documentation: {
         info: {
           title: 'Yinzers.io',

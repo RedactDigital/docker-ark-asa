@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/app/index.js",
   "scripts": {
-    "test": "bun test --watch",
+    "test": "bun test --watch app/test-setup.ts",
     "test:production": "bun test --timeout 20 --rerun-each 10 --bail 10",
     "clean": "rm -rf dist && rm -rf storage && echo 'Done.'",
     "build": "bun build --target=bun app/index.ts --outfile=dist/index.js",
@@ -30,6 +30,7 @@
     "npm": "^10.2.3",
     "rconify": "^1.0.1",
     "steamapi": "^2.4.2",
+    "stripe": "^14.4.0",
     "winston": "^3.10.0"
   },
   "devDependencies": {

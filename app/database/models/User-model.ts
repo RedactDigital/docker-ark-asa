@@ -3,7 +3,7 @@ import type { CreationOptional, InferAttributes, InferCreationAttributes } from 
 import { DataTypes, Model } from '@sequelize/core';
 import { Attribute, AutoIncrement, NotNull, PrimaryKey, Table } from '@sequelize/core/decorators-legacy';
 
-@Table({ tableName: 'users' })
+@Table({ tableName: 'users', defaultScope: { attributes: { exclude: ['password'] } } })
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   @Attribute(DataTypes.INTEGER)
   @PrimaryKey

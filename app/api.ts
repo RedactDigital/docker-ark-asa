@@ -1,12 +1,8 @@
-const res = await fetch('http://localhost:5000/auth/register', {
-  method: 'POST',
+const res = await fetch('http://app:5000/steam/redirectUrl', {
+  method: 'GET',
   headers: {
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify({
-    email: 'w',
-    password: 'w',
-  }),
 });
 
 if (res.ok) {

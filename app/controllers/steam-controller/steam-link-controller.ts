@@ -1,11 +1,12 @@
-import type { Context } from 'elysia';
+import { t } from 'elysia';
 import SteamAPI from 'steamapi';
 import type { OpenAPIV3 } from 'openapi-types';
 import type { ReturnResponse } from 'types/response-types.ts';
 import { User } from 'models/User-model.ts';
+import type { BunContext } from 'root/index.ts';
 
-export default async (ctx: Context): Promise<ReturnResponse> => {
-  let steamId = ctx.query['openid.identity'];
+export default async ({ query, set }: BunContext): Promise<ReturnResponse> => {
+  let steamId = query['openid.identity'];
   if (!steamId) return { success: false, error: 'Invalid steam id' };
   steamId = steamId.replace('https://steamcommunity.com/openid/id/', '');
 
@@ -15,17 +16,23 @@ export default async (ctx: Context): Promise<ReturnResponse> => {
 
   const steamUser = await steam.getUserSummary(steamId);
 
-  const [user] = await User.findOrCreate({
+  const user = await User.findOne({
     where: {
-      id: user.id,
+      id: 1,
     },
-    defaults: {
-      steamId,
-      steamName: steamUser.nickname,
-      avatar: steamUser.avatar.large,
-      country: steamUser.countryCode,
-      steamUrl: steamUser.url,
-    },
+  });
+
+  if (!user) {
+    set.status = 404;
+    return { success: false, error: 'User not found' };
+  }
+
+  await user.update({
+    steamId: steamUser.steamID,
+    steamName: steamUser.nickname,
+    avatar: steamUser.avatar.large,
+    country: steamUser.countryCode ?? '',
+    steamUrl: steamUser.url,
   });
 
   return {
@@ -36,55 +43,25 @@ export default async (ctx: Context): Promise<ReturnResponse> => {
   };
 };
 
-export const steamLinkDocs: OpenAPIV3.OperationObject = {
-  tags: ['Steam'],
-  responses: {
-    200: {
-      description: 'Success',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-              data: {
-                type: 'object',
-                properties: {
-                  user: {
-                    type: 'object',
-                    properties: {
-                      id: { type: 'number' },
-                      steamId: { type: 'string' },
-                      steamName: { type: 'string' },
-                      avatar: { type: 'string' },
-                      country: { type: 'string' },
-                      steamUrl: { type: 'string' },
-                      createdAt: { type: 'string' },
-                      updatedAt: { type: 'string' },
-                    },
-                  },
-                },
-              },
-            },
-          },
-          example: {
-            success: true,
-            data: {
-              user: {
-                id: 1,
-                steamId: '76561198025050683',
-                steamName: 'Yinzers.io',
-                avatar:
-                  'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/3e/3e9d0d4c0e9f4d1d7e0d3a1f1b2d4a9b6e0f4e0b_full.jpg',
-                country: 'US',
-                steamUrl: 'https://steamcommunity.com/id/yinzersio/',
-                createdAt: '2021-08-09T02:27:33.000Z',
-                updatedAt: '2021-08-09T02:27:33.000Z',
-              },
-            },
-          },
-        },
-      },
-    },
+export const steamLinkDocs = {
+  response: t.Object({
+    success: t.Boolean(),
+    data: t.Object({
+      user: t.Object({
+        id: t.Number(),
+        email: t.String(),
+        steamId: t.String(),
+        steamName: t.String(),
+        avatar: t.String(),
+        country: t.String(),
+        steamUrl: t.String(),
+        createdAt: t.Date(),
+        updatedAt: t.Date(),
+      }),
+    }),
+  }),
+  detail: <OpenAPIV3.OperationObject>{
+    tags: ['Steam'],
+    summary: 'Link steam account to user profile',
   },
 };

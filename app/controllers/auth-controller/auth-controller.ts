@@ -1,7 +1,8 @@
 import { randomBytes } from 'crypto';
+import { t } from 'elysia';
 import type { Context } from 'elysia';
-import type { OpenAPIV3 } from 'openapi-types';
 import dayjs from 'dayjs';
+import type { OpenAPIV3 } from 'openapi-types';
 import type { ReturnResponse } from 'types/response-types.ts';
 import { User } from 'models/User-model.ts';
 import type { BunContext } from 'root/index.ts';
@@ -24,6 +25,9 @@ export default async ({ body, accessToken, set }: BunContext): Promise<ReturnRes
       email,
       password,
     },
+    attributes: {
+      include: ['password'],
+    },
   });
 
   if (noUserExists) {
@@ -44,46 +48,37 @@ export default async ({ body, accessToken, set }: BunContext): Promise<ReturnRes
     iat: dayjs().unix(),
   });
 
+  const { password: _, ...userWithoutPassword } = user.toJSON();
+
   return {
     success: true,
     data: {
-      user,
+      user: userWithoutPassword,
       accessToken: token,
     },
   };
 };
 
-export const authDocs: OpenAPIV3.OperationObject = {
-  tags: ['Auth'],
-  responses: {
-    200: {
-      description: 'Returns the user and access token',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-              data: {
-                type: 'object',
-                properties: {
-                  user: {
-                    type: 'object',
-                    properties: {
-                      id: { type: 'string' },
-                      email: { type: 'string' },
-                      verificationCode: { type: 'string' },
-                      createdAt: { type: 'string' },
-                      updatedAt: { type: 'string' },
-                    },
-                  },
-                  accessToken: { type: 'string' },
-                },
-              },
-            },
-          },
-        },
-      },
+export const authControllerDocs = {
+  body: t.Object({ email: t.String(), password: t.String() }),
+  response: t.Object(
+    {
+      success: t.Boolean(),
+      data: t.Object({
+        user: t.Object({
+          id: t.Number(),
+          email: t.String(),
+          verificationCode: t.String(),
+          createdAt: t.Date(),
+          updatedAt: t.Date(),
+        }),
+        accessToken: t.String(),
+      }),
     },
+    { description: 'Success' },
+  ),
+  detail: <OpenAPIV3.OperationObject>{
+    tags: ['Auth'],
+    summary: 'Authenticate or register a user',
   },
 };

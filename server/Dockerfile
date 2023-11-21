@@ -4,58 +4,37 @@ FROM debian:bullseye-slim
 ENV USER=arkuser
 ENV UID=1000
 ENV GID=1000
+ENV TINI_VERSION=v0.19.0
+ENV STEAM_COMPAT_CLIENT_INSTALL_PATH=/home/${USER}/.steam/steam
+ENV STEAM_COMPAT_DATA_PATH=/home/${USER}/.steam/steam/steamapps/compatdata/2430930
+ENV LOG_FILE=/opt/arkserver/ShooterGame/Saved/Logs/ShooterGame.log
+ENV PID_FILE=/opt/arkserver/.server.pid
 
 # Add the ark user and group that will be used to run the server
 RUN groupadd --gid ${GID} ${USER} && \
-    useradd --create-home --shell /bin/bash --uid ${UID} --gid ${GID} ${USER} && \
-    usermod -aG sudo ${USER}
+    useradd --create-home --shell /bin/bash --uid ${UID} --gid ${GID} ${USER}
 
+# The folder that will contain the server files
 RUN mkdir /opt/arkserver
 
 # Because steam is a 32 bit app, we need to add the i386 architecture
 RUN dpkg --add-architecture i386
 
+# Add the ll alias
+RUN echo "alias ll='ls -alF'" >> /home/${USER}/.bashrc
+
 # Install the required packages
 RUN set -ex && apt update && apt install -y --no-install-recommends \
     wget \
-    iproute2 \
-    gnupg2 \
-    software-properties-common \
-    libntlm0 \
-    winbind \
-    xvfb \
-    xauth \
-    libncurses5-dev:i386 \
-    libncurses6 \
-    dbus \
-    libgdiplus \
-    lib32gcc-s1;
-
-RUN set -ex && apt install -y \
-    alsa-tools \
-    libpulse0 \
-    pulseaudio \
-    libpulse-dev \
-    libasound2 \
-    libao-common \
-    gnutls-bin \
-    gnupg \
-    locales \
-    numactl \
-    cabextract \
     curl \
-    python3 \
-    python3-pip \
-    python3-setuptools \
+    jq \
     sudo \
+    iproute2 \
     procps \
-    vim \
-    cron;
-
-# Add unicode support
-RUN locale-gen en_US.UTF-8
-ENV LANG 'en_US.UTF-8'
-ENV LANGUAGE 'en_US:en'
+    software-properties-common \
+    dbus \
+    lib32gcc-s1 \
+    vim;
 
 # Download steamcmd
 RUN set -ex; \
@@ -65,7 +44,7 @@ RUN set -ex; \
 
 # Download Proton GE
 RUN set -ex; \
-    curl -sLOJ "$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)"; \
+    curl -sLOJ "$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/130226909 | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)"; \
     tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/ --strip-components=1; \
     rm GE-Proton*.*
 
@@ -83,6 +62,10 @@ RUN set -ex; \
     tar xvf rcon.tar.gz; \
     mv rcon-0.10.3-amd64_linux/rcon /usr/local/bin/
 
+# Install tini
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
 # Install Cleanup
 RUN apt-get -y autoremove \
     && apt-get -y clean \
@@ -95,15 +78,16 @@ RUN set -ex \
     chown -R ${USER}:${USER} /opt/arkserver; \
     chown -R ${USER}:${USER} /opt/steamcmd
 
+COPY --chown=${USER} --chmod=755 ./scripts/start.sh /opt/start.sh
+COPY --chown=${USER} --chmod=755 ./scripts/manager /opt/manager
+
+RUN ln -s /opt/manager/manager.sh /usr/local/bin/manager
 
 # Switch to the ark user so that the server files are owned by the ark user
 USER ${USER}
 
 # This needs done after the user is created so that the files are owned by the ark user
-WORKDIR /home/${USER}
+WORKDIR /opt/arkserver
 
-COPY --chown=${USER} --chmod=755 ./scripts/entrypoint.sh /entrypoint.sh
-COPY --chown=${USER} --chmod=755 ./scripts/manager.sh /usr/local/bin/manager
-COPY --chown=${USER} --chmod=755 ./scripts/start.sh /opt/arkserver/start.sh
-
-CMD ["/bin/bash", "/entrypoint.sh"]
+#on startup enter start.sh script
+ENTRYPOINT ["/tini", "--", "/opt/start.sh"]

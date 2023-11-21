@@ -7,7 +7,7 @@ set -e
 mkdir -p "${STEAM_COMPAT_DATA_PATH}"
 
 # Install or update ASA server + verify installation
-# /opt/steamcmd/steamcmd.sh +force_install_dir /opt/arkserver +login anonymous +app_update ${ASA_APPID} validate +quit
+/opt/steamcmd/steamcmd.sh +force_install_dir /opt/arkserver +login anonymous +app_update ${ASA_APPID} validate +quit
 
 # Remove unnecessary files (saves 6.4GB.., that will be re-downloaded next update)
 if [[ -n "${REDUCE_IMAGE_SIZE}" ]]; then

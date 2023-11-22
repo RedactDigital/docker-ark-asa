@@ -91,7 +91,7 @@ services:
 
       # Extra arguments
       ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
-      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -EnableIdlePlayerKick -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog -servergamelogincludetribelogs'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog -servergamelogincludetribelogs'
       EVENT: 'WinterWonderland' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
 
       # Uncomment to remove unnecessary files to reduce image size

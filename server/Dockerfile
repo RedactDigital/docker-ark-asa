@@ -6,7 +6,7 @@ ENV UID=1000
 ENV GID=1000
 ENV TINI_VERSION=v0.19.0
 ENV STEAM_COMPAT_CLIENT_INSTALL_PATH=/home/${USER}/.steam/steam
-ENV STEAM_COMPAT_DATA_PATH=/home/${USER}/.steam/steam/steamapps/compatdata/2430930
+ENV STEAM_COMPAT_DATA_PATH=/home/${USER}/.steam/steam/steamapps/compatdata/${ASA_APPID}
 ENV LOG_FILE=/opt/arkserver/ShooterGame/Saved/Logs/ShooterGame.log
 ENV PID_FILE=/opt/arkserver/.server.pid
 
@@ -34,7 +34,8 @@ RUN set -ex && apt update && apt install -y --no-install-recommends \
     software-properties-common \
     dbus \
     lib32gcc-s1 \
-    vim;
+    vim \
+    unzip;
 
 # Download steamcmd
 RUN set -ex; \
@@ -44,7 +45,7 @@ RUN set -ex; \
 
 # Download Proton GE
 RUN set -ex; \
-    curl -sLOJ "$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/130226909 | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)"; \
+    curl -sLOJ "$(curl -s https://api.github.com/repos/GloriousEggroll/proton-ge-custom/releases/latest | grep browser_download_url | cut -d\" -f4 | egrep .tar.gz)"; \
     tar -xzf GE-Proton*.tar.gz -C /usr/local/bin/ --strip-components=1; \
     rm GE-Proton*.*
 

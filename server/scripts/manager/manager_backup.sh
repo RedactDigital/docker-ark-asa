@@ -11,7 +11,7 @@ archive_name=$(date +"%Y-%m-%d_%H-%M-%S")
 
 # copy live path to another folder so tar doesnt get any write on read fails
 echo "copying save folder"
-cp -r -R /opt/arkserver/ShooterGame/Saved $copyPath
+cp -r -R "${ARK_DIR}/ShooterGame/Saved" $copyPath
 
 # tar.gz from the copy path
 echo "creating archive"

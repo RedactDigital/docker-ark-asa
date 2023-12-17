@@ -199,11 +199,7 @@ start() {
     nohup ${MANAGER_DIR}/manager_server_start.sh >/dev/null 2>&1 &
     ark_pid=$!
     echo "$ark_pid" >"$PID_FILE"
-
-    # Wait for server to fully start otherwise the API will error
-    sleep 90
-
-    startAPI
+    sleep 3
 }
 
 startAPI() {
@@ -395,6 +391,9 @@ main() {
         ;;
     "start")
         start
+        ;;
+    "startAPI")
+        startAPI
         ;;
     "stop")
         stop "$option"

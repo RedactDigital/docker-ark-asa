@@ -52,7 +52,7 @@ services:
     networks:
       - ark
 
-  app:
+  island:
     build:
       context: ./server
       dockerfile: Dockerfile

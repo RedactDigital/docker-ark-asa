@@ -41,23 +41,23 @@ services:
   #     ARK_ADMIN_PASSWORD: ab89EBHAEh5b
   #     ISLAND_RCON_PORT: 27020
 
-  # discord:
-  #   user: bun
-  #   image: oven/bun:1.0.4
-  #   restart: unless-stopped
-  #   working_dir: /usr/src/app
-  #   command: sh -c "bun install && bun --watch discord/index.discord.ts"
-  #   volumes:
-  #     - ./:/usr/src/app
-  #   networks:
-  #     - ark
+  discord:
+    user: bun
+    image: oven/bun:1.0.4
+    restart: unless-stopped
+    working_dir: /usr/src/app
+    command: sh -c "bun install && bun --watch discord/index.discord.ts"
+    volumes:
+      - ./:/usr/src/app
+    networks:
+      - ark
 
   app:
     build:
       context: ./server
       dockerfile: Dockerfile
     volumes:
-      - ./server/Saved:/home/arkuser/.steam/steam/steamapps/common
+      # - ./server/Saved:/home/arkuser/.steam/steam/steamapps/common
       - ./server/backups:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
@@ -71,8 +71,8 @@ services:
       # ASA_APPID should only be changed if Wildcard provides a new one
       ASA_APPID: 2430930
       SERVER_MAP: TheIsland_WP
-      SESSION_NAME: 'mytempserverbossman'
-      # SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
+      # SESSION_NAME: 'mytempserverbossman'
+      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
       SERVER_PORT: 7777
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30

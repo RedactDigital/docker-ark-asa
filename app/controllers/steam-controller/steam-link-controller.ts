@@ -44,6 +44,9 @@ export default async ({ query, set }: BunContext): Promise<ReturnResponse> => {
 };
 
 export const steamLinkDocs = {
+  query: t.Object({
+    'openid.identity': t.String(),
+  }),
   response: t.Object({
     success: t.Boolean(),
     data: t.Object({

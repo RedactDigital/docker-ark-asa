@@ -10,6 +10,7 @@
     "clean": "rm -rf dist && rm -rf storage && echo 'Done.'",
     "build": "bun build --target=bun app/index.ts --outfile=dist/index.js",
     "start": "bun --watch app/index.ts",
+    "start:worker": "bun --watch worker/index-worker.ts",
     "lint": "prettier --check app && eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore && cspell . --no-progress --unique",
     "format": "prettier --write app"
   },
@@ -19,6 +20,7 @@
     "@elysiajs/jwt": "^0.7.0",
     "@sequelize/core": "alpha",
     "@sequelize/validator.js": "^7.0.0-alpha.33",
+    "bull": "^4.11.5",
     "cron": "^3.1.6",
     "datadog-winston": "^1.5.1",
     "dayjs": "^1.11.9",
@@ -28,7 +30,7 @@
     "mysql2": "^3.6.3",
     "node-steam-openid": "^1.2.0",
     "npm": "^10.2.3",
-    "rconify": "^1.0.1",
+    "rcon-client": "^4.2.4",
     "steamapi": "^2.4.2",
     "stripe": "^14.4.0",
     "winston": "^3.10.0"

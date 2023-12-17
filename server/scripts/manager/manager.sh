@@ -1,6 +1,6 @@
 #!/bin/bash
 RCON_CMDLINE=(rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD})
-EOS_FILE=/opt/manager/.eos.config
+EOS_FILE=${MANAGER_DIR}/.eos.config
 
 get_and_check_pid() {
     # Get PID
@@ -20,18 +20,18 @@ get_and_check_pid() {
 
 full_status_setup() {
     # Check PDB is still available
-    if [[ ! -f "/opt/arkserver/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb" ]]; then
-        echo "/opt/arkserver/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb is needed to setup full status."
+    if [[ ! -f "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb" ]]; then
+        echo "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb is needed to setup full status."
         return 1
     fi
 
-    # Download pdb-sym2addr-rs and extract it to /opt/manager/pdb-sym2addr
-    wget -q https://github.com/azixus/pdb-sym2addr-rs/releases/latest/download/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz -O /opt/manager/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz
-    tar -xzf /opt/manager/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz -C /opt/manager
-    rm /opt/manager/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz
+    # Download pdb-sym2addr-rs and extract it to ${MANAGER_DIR}/pdb-sym2addr
+    wget -q https://github.com/azixus/pdb-sym2addr-rs/releases/latest/download/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz -O ${MANAGER_DIR}/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz
+    tar -xzf ${MANAGER_DIR}/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz -C ${MANAGER_DIR}
+    rm ${MANAGER_DIR}/pdb-sym2addr-x86_64-unknown-linux-musl.tar.gz
 
     # Extract EOS login
-    symbols=$(/opt/manager/pdb-sym2addr /opt/arkserver/ShooterGame/Binaries/Win64/ArkAscendedServer.exe /opt/arkserver/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb DedicatedServerClientSecret DedicatedServerClientId DeploymentId)
+    symbols=$(${MANAGER_DIR}/pdb-sym2addr ${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.exe ${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb DedicatedServerClientSecret DedicatedServerClientId DeploymentId)
 
     client_id=$(echo "$symbols" | grep -o 'DedicatedServerClientId.*' | cut -d, -f2)
     client_secret=$(echo "$symbols" | grep -o 'DedicatedServerClientSecret.*' | cut -d, -f2)
@@ -193,15 +193,56 @@ start() {
     fi
 
     echo "Starting server on port ${SERVER_PORT}"
-    echo "-------- STARTING SERVER --------" >>$LOG_FILE
+    echo "-------- STARTING SERVER --------" >>"$LOG_FILE"
 
     # Start server in the background + nohup and save PID
-    nohup /opt/manager/manager_server_start.sh >/dev/null 2>&1 &
+    nohup ${MANAGER_DIR}/manager_server_start.sh >/dev/null 2>&1 &
     ark_pid=$!
-    echo "$ark_pid" >$PID_FILE
-    sleep 3
+    echo "$ark_pid" >"$PID_FILE"
 
-    echo "Server should be up in a few minutes"
+    # Wait for server to fully start otherwise the API will error
+    sleep 90
+
+    startAPI
+}
+
+startAPI() {
+    # Check server is running and that the log file contains "has successfully started"
+    ark_pid=$(get_and_check_pid)
+    if [[ "$ark_pid" != 0 ]]; then
+        count=0
+        while true; do
+            if grep -q "Full Startup" "${LOG_FILE}"; then
+                echo "Server has successfully started, stopping to start ASA API"
+
+                # Forcing shutdown should be okay because the server has just started
+                forceShutdown
+                sleep 10
+
+                # Start server in the background + nohup and save PID
+                echo "Starting ASA API on port ${SERVER_PORT}"
+                echo "-------- STARTING API SERVER --------" >>"$LOG_FILE"
+                nohup ${MANAGER_DIR}/manager_server_api_start.sh >/dev/null 2>&1 &
+                ark_pid=$!
+                echo "$ark_pid" >"$PID_FILE"
+                sleep 3
+
+                echo "Server should be up in a few minutes"
+                break
+            fi
+
+            if [[ $count -gt 24 ]]; then
+                echo "Server failed to start after 2 minutes, aborting"
+                break
+            fi
+
+            count=$((count + 1))
+            sleep 5
+        done
+        return
+    else
+        echo "Server is down"
+    fi
 }
 
 stop() {
@@ -212,46 +253,52 @@ stop() {
         return
     fi
 
-    if [[ $1 == "--saveworld" ]]; then
-        saveworld
+    # Check number of players
+    out=$(${RCON_CMDLINE[@]} listplayers 2>/dev/null)
+    res=$?
+    if ([[ $res == 0 ]] && [[ "$out" != "No Players"* ]]); then
+        num_players=$(echo "$out" | wc -l)
+        if [[ "$num_players" -gt 0 ]]; then
+            echo "There are still $num_players players connected to the server."
+            echo "Please disconnect all players before stopping the server."
+            return
+        fi
+    else
+        gracefulStop
     fi
 
-    echo "Stopping server gracefully..."
-    echo "-------- STOPPING SERVER --------" >>$LOG_FILE
+    echo "" >"$PID_FILE"
+    echo "-------- SERVER STOPPED --------" >>"$LOG_FILE"
+}
 
-    # Check number of players
+gracefulStop() {
+    ark_pid=$(get_and_check_pid)
+    echo "Stopping server gracefully..."
+    echo "-------- STOPPING SERVER --------" >>"$LOG_FILE"
+
+    saveworld
+
     out=$(${RCON_CMDLINE[@]} DoExit 2>/dev/null)
     res=$?
-    force=false
     if [[ $res == 0 && "$out" == "Exiting..." ]]; then
+        echo "Success!"
         echo "Waiting ${SERVER_SHUTDOWN_TIMEOUT}s for the server to stop"
         timeout $SERVER_SHUTDOWN_TIMEOUT tail --pid=$ark_pid -f /dev/null
         res=$?
 
-        # Timeout occurred
+        # Timeout occurred, force shutdown
         if [[ "$res" == 124 ]]; then
             echo "Server still running after $SERVER_SHUTDOWN_TIMEOUT seconds"
-            force=true
-        fi
-    else
-        force=true
-    fi
-
-    if [[ "$force" == true ]]; then
-        echo "Forcing server shutdown"
-        kill -INT $ark_pid
-
-        timeout $SERVER_SHUTDOWN_TIMEOUT tail --pid=$ark_pid -f /dev/null
-        res=$?
-        # Timeout occurred
-        if [[ "$res" == 124 ]]; then
-            kill -9 $ark_pid
+            forceShutdown
         fi
     fi
+}
 
-    echo "" >$PID_FILE
-    echo "Done"
-    echo "-------- SERVER STOPPED --------" >>$LOG_FILE
+forceShutdown() {
+    ark_pid=$(get_and_check_pid)
+    echo "Forcing server shutdown"
+
+    kill $ark_pid
 }
 
 restart() {
@@ -271,9 +318,9 @@ saveworld() {
     out=$(${RCON_CMDLINE[@]} SaveWorld 2>/dev/null)
     res=$?
     if [[ $res == 0 && "$out" == "World Saved" ]]; then
-        echo "Success!"
+        echo "Save Success!"
     else
-        echo "Failed."
+        echo "Save Failed."
     fi
 }
 
@@ -293,11 +340,11 @@ update() {
     echo "Updating ARK Ascended Server"
 
     stop --saveworld
-    /opt/steamcmd/steamcmd.sh +force_install_dir /opt/arkserver +login anonymous +app_update ${ASA_APPID} +quit
+    ${STEAMCMD_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} +quit
     # Remove unnecessary files (saves 6.4GB.., that will be re-downloaded next update)
     if [[ -n "${REDUCE_IMAGE_SIZE}" ]]; then
-        rm -rf /opt/arkserver/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb
-        rm -rf /opt/arkserver/ShooterGame/Content/Movies/
+        rm -rf ${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb
+        rm -rf ${ARK_DIR}/ShooterGame/Content/Movies/
     fi
 
     echo "Update completed"
@@ -311,11 +358,11 @@ backup() {
     # sleep is nessecary because the server seems to write save files after the saveworld function ends and thus tar runs into errors.
     sleep 5
     # Use backup script
-    /opt/manager/manager_backup.sh
+    ${MANAGER_DIR}/manager_backup.sh
 
     res=$?
     if [[ $res == 0 ]]; then
-        echo "BACKUP CREATED" >>$LOG_FILE
+        echo "BACKUP CREATED" >>"$LOG_FILE"
     else
         echo "creating backup failed"
     fi
@@ -328,7 +375,7 @@ restoreBackup() {
         stop
         sleep 3
         # restoring the backup
-        /opt/manager/manager_restore_backup.sh
+        ${MANAGER_DIR}/manager_restore_backup.sh
 
         sleep 2
         start

@@ -27,6 +27,7 @@
       "models/*": ["./app/database/models/*"],
       "types/*": ["./app/types/*"],
       "controllers/*": ["./app/controllers/*"],
+      "worker/*": ["worker/*"],
       "root/*": ["./app/*"]
     },
     "sourceMap": false,
@@ -55,5 +56,5 @@
     "strictBindCallApply": true,
     "experimentalDecorators": true
   },
-  "include": ["app/**/*", "discord/**/*"]
+  "include": ["app/**/*", "discord/**/*", "worker/**/*"]
 }

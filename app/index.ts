@@ -9,8 +9,8 @@ import log from 'utils/log-utils.ts';
 import { sequelize } from 'models/index.ts';
 import steamRoutes from 'root/routes/steam-routes.ts';
 import authRoutes from 'root/routes/auth-routes.ts';
+import { rconInit } from 'utils/rcon-utils.ts';
 
-await sequelize.authenticate();
 export const app = new Elysia();
 
 export interface BunContext extends Context {
@@ -25,8 +25,10 @@ app
   .onStop(() => {
     log.warn('🦊 Elysia is shutting down...');
   })
-  .onStart(() => {
+  .onStart(async () => {
     log.info('🦊 Elysia is starting...');
+    await sequelize.authenticate();
+    await rconInit();
   })
   .onError(({ error }) => {
     log.error('Error', error);

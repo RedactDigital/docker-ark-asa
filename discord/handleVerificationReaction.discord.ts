@@ -1,4 +1,5 @@
 import type { Client, Guild, Message, TextChannel } from 'discord.js';
+import { User } from 'models/User-model.ts';
 
 export default async (client: Client, server: Guild): Promise<void> => {
   const rulesChannel = <TextChannel | null>await server.channels.fetch('1168322918728597626');
@@ -27,6 +28,22 @@ export default async (client: Client, server: Guild): Promise<void> => {
       if (reaction.emoji.name === '✅') {
         const member = await reaction.message.guild.members.fetch(user.id);
         await member.roles.add('1168412902143840276');
+        if (!user.username && !user.id) throw new Error('User not found');
+
+        await User.findOrCreate({
+          where: { discordId: user.id },
+          defaults: {
+            discordId: user.id,
+            password: 'password',
+            discordUsername: user.username ?? '',
+            discordDisplayname: user.globalName ?? '',
+          },
+        });
+
+        const dm = await user.createDM();
+        await dm.send(
+          'Thank you for accepting the rules. For your free starter kit reply here with your in-game name. Please not that it is case sensitive and you can only do this once. Also only respond with your in-game name, nothing else.',
+        );
       }
     }
   });

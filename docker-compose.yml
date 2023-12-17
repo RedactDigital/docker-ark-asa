@@ -21,6 +21,7 @@ services:
   #     - ark
   #   environment:
   #     ARK_ADMIN_PASSWORD: ab89EBHAEh5b
+  #     ISLAND_RCON_PORT: 27020
 
   # worker:
   #   depends_on:
@@ -38,24 +39,25 @@ services:
   #     - ark
   #   environment:
   #     ARK_ADMIN_PASSWORD: ab89EBHAEh5b
+  #     ISLAND_RCON_PORT: 27020
 
-  discord:
-    user: bun
-    image: oven/bun:1.0.4
-    restart: unless-stopped
-    working_dir: /usr/src/app
-    command: sh -c "bun install && bun --watch discord/index.discord.ts"
-    volumes:
-      - ./:/usr/src/app
-    networks:
-      - ark
+  # discord:
+  #   user: bun
+  #   image: oven/bun:1.0.4
+  #   restart: unless-stopped
+  #   working_dir: /usr/src/app
+  #   command: sh -c "bun install && bun --watch discord/index.discord.ts"
+  #   volumes:
+  #     - ./:/usr/src/app
+  #   networks:
+  #     - ark
 
-  island:
+  app:
     build:
       context: ./server
       dockerfile: Dockerfile
     volumes:
-      - ./server/Saved:/opt/arkserver
+      - ./server/Saved:/home/arkuser/.steam/steam/steamapps/common
       - ./server/backups:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
@@ -69,7 +71,8 @@ services:
       # ASA_APPID should only be changed if Wildcard provides a new one
       ASA_APPID: 2430930
       SERVER_MAP: TheIsland_WP
-      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
+      SESSION_NAME: 'mytempserverbossman'
+      # SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
       SERVER_PORT: 7777
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30
@@ -90,12 +93,9 @@ services:
       # MODS=
 
       # Extra arguments
-      ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500?OverrideStructurePlatformPrevention=true'
+      ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
       ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog -servergamelogincludetribelogs'
       EVENT: 'WinterWonderland' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
-
-      # Uncomment to remove unnecessary files to reduce image size
-      # REDUCE_IMAGE_SIZE: 1
     deploy:
       resources:
         limits:
@@ -119,7 +119,7 @@ services:
   #     retries: 3
   #     start_period: 5s
   #   volumes:
-  #     - ./storage/mysql:/var/lib/mysql
+  #     - /var/lib/mysql
   #   ports:
   #     - 3306:3306
   #   networks:

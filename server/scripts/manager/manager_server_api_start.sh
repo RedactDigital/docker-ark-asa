@@ -48,5 +48,6 @@ ark_flags="${ark_flags} ${ARK_EXTRA_DASH_OPTS}"
 #fix for docker compose exec / docker exec parsing inconsistencies
 STEAM_COMPAT_DATA_PATH=$(eval echo "$STEAM_COMPAT_DATA_PATH")
 
-#starting server
-proton run "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.exe" ${cmd} ${ark_flags} >/dev/null 2>&1
+#starting server and outputting log file
+#once we see "has successfully started" in the log file, we stop the server and start the asaapi
+protontricks-launch "${ARK_DIR}/ShooterGame/Binaries/Win64/AsaApiLoader.exe" ${cmd} ${ark_flags} vcrun2022 >/dev/null 2>&1 &

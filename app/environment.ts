@@ -26,10 +26,10 @@ declare module 'bun' {
   }
 
   interface RCONEnv {
-    /**
-     * This defaults to `TheAdminPass` if not set.
-     */
     ARK_ADMIN_PASSWORD: string;
+
+    ISLAND_HOST: string;
+    ISLAND_RCON_PORT: number;
   }
 
   interface DatabaseEnv {
@@ -57,6 +57,26 @@ declare module 'bun' {
      * This defaults to `elysia` if not set.
      */
     DATABASE_NAME: string;
+
+    /**
+     * This defaults to `redis` if not set.
+     */
+    REDIS_HOST?: string;
+
+    /**
+     * This defaults to `6379` if not set.
+     */
+    REDIS_PORT?: number;
+
+    /**
+     * This defaults to `password` if not set.
+     */
+    REDIS_PASSWORD?: string;
+
+    /**
+     * This defaults to `root` if not set.
+     */
+    REDIS_USER?: string;
   }
 
   interface AuthEnv {

@@ -57,7 +57,7 @@ services:
       context: ./server
       dockerfile: Dockerfile
     volumes:
-      - ./server/Saved:"/home/arkuser/.steam/steam/steamapps/common/ARK Survival Ascended Dedicated Server"
+      - ./server/Saved:/home/arkuser/.steam/steam/steamapps/common/ARK Survival Ascended Dedicated Server
       - ./server/backups:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:

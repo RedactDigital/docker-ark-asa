@@ -202,43 +202,25 @@ start() {
     sleep 3
 }
 
-startAPI() {
-    # Check server is running and that the log file contains "has successfully started"
+startApi() {
+    # Get server pid
     ark_pid=$(get_and_check_pid)
-    if [[ "$ark_pid" != 0 ]]; then
-        count=0
-        while true; do
-            if grep -q "Full Startup" "${LOG_FILE}"; then
-                echo "Server has successfully started, stopping to start ASA API"
+    if [[ "$ark_pid" == 0 ]]; then
 
-                # Forcing shutdown should be okay because the server has just started
-                forceShutdown
-                sleep 10
+        # Start server in the background + nohup and save PID
+        echo "Starting ASA API on port ${SERVER_PORT}"
+        echo "-------- STARTING API SERVER --------" >>"$LOG_FILE"
+        nohup ${MANAGER_DIR}/manager_server_api_start.sh >/dev/null 2>&1 &
+        ark_pid=$!
+        echo "$ark_pid" >"$PID_FILE"
+        sleep 3
 
-                # Start server in the background + nohup and save PID
-                echo "Starting ASA API on port ${SERVER_PORT}"
-                echo "-------- STARTING API SERVER --------" >>"$LOG_FILE"
-                nohup ${MANAGER_DIR}/manager_server_api_start.sh >/dev/null 2>&1 &
-                ark_pid=$!
-                echo "$ark_pid" >"$PID_FILE"
-                sleep 3
-
-                echo "Server should be up in a few minutes"
-                break
-            fi
-
-            if [[ $count -gt 24 ]]; then
-                echo "Server failed to start after 2 minutes, aborting"
-                break
-            fi
-
-            count=$((count + 1))
-            sleep 5
-        done
-        return
+        echo "Server should be up in a few minutes"
     else
-        echo "Server is down"
+        echo "Server is already running."
+        return
     fi
+
 }
 
 stop() {
@@ -417,7 +399,7 @@ main() {
         restoreBackup
         ;;
     *)
-        echo "Invalid action. Supported actions: status, start, stop, restart, saveworld, rcon, update, backup, restore."
+        echo "Invalid action. Supported actions: status, start, startApi, stop, restart, saveworld, rcon, update, backup, restore."
         exit 1
         ;;
     esac

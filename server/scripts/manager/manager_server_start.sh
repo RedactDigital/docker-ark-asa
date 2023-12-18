@@ -2,7 +2,7 @@
 # This file is called by manager.sh to start a new instance of ASA
 
 # Server main options
-cmd="${SERVER_MAP}?listen?SessionName=\"${SESSION_NAME}\"?Port=${SERVER_PORT}"
+cmd="${SERVER_MAP}?listen?SessionName=\"${SESSION_NAME}\"?Port=${SERVER_PORT}?QueryPort=${QUERY_PORT}"
 if [ -n "${MAX_PLAYERS}" ]; then
     cmd="${cmd}?MaxPlayers=${MAX_PLAYERS}"
 fi

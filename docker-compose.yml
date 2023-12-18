@@ -61,9 +61,14 @@ services:
       - ./server/backups:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
+      # The connection port for the ARK game client
       - 7777:7777/udp
+      # Raw UDP port (should always be game client port + 1)
+      - 7778:7778/udp
+      # Query port used to list servers on steam (Query Port cannot be between 27020 and 27050 due to Steam using those ports)
+      - 27015:27015/udp
+      # RCON management port
       - 27020:27020/tcp
-      - 27015:27015/tcp
     networks:
       - ark
     # Increase default grace period to ensure clean shutdown
@@ -75,6 +80,7 @@ services:
       # SESSION_NAME: 'mytempserverbossman'
       SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
       SERVER_PORT: 7777
+      QUERY_PORT: 27015
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30
 

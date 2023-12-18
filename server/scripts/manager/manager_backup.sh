@@ -2,7 +2,7 @@
 set -e
 # create backup folder if it not already exists
 path="/var/backups/asa-server"
-copyPath="/opt/arkserver/tmp/backup"
+copyPath="/tmp"
 
 mkdir -p $path
 mkdir -p $copyPath

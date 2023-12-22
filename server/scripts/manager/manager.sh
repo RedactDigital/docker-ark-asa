@@ -195,6 +195,10 @@ start() {
         return
     fi
 
+    echo "Archiving old logs"
+    mv ${ARK_DIR}/ShooterGame/Saved/Logs/ShooterGame/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
+    mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
+
     echo "Starting server on port ${SERVER_PORT}"
     echo "-------- STARTING SERVER --------" >>"$LOG_FILE"
 
@@ -212,6 +216,10 @@ startApi() {
         echo "Server is already running."
         return
     fi
+
+    echo "Archiving old logs"
+    mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
+    mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
 
     # Start server in the background + nohup and save PID
     echo "Starting ASA API on port ${SERVER_PORT}"

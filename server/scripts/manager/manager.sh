@@ -195,9 +195,15 @@ start() {
         return
     fi
 
-    echo "Archiving old logs"
-    mv ${ARK_DIR}/ShooterGame/Saved/Logs/ShooterGame/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
-    mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
+    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
+        echo "Archiving old logs"
+        mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
+    fi
+
+    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
+        echo "Archiving old logs"
+        mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
+    fi
 
     echo "Starting server on port ${SERVER_PORT}"
     echo "-------- STARTING SERVER --------" >>"$LOG_FILE"
@@ -217,9 +223,15 @@ startApi() {
         return
     fi
 
-    echo "Archiving old logs"
-    mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
-    mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
+    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
+        echo "Archiving old logs"
+        mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
+    fi
+
+    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
+        echo "Archiving old logs"
+        mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
+    fi
 
     # Start server in the background + nohup and save PID
     echo "Starting ASA API on port ${SERVER_PORT}"

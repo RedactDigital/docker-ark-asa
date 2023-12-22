@@ -57,51 +57,31 @@ services:
       context: ./server
       dockerfile: Dockerfile
     volumes:
-      - ./server/Saved:/home/arkuser/.steam/steam/steamapps/common/ARK Survival Ascended Dedicated Server
+      - ./server/Saved:/opt/steam/steamapps/common/asa-server
       - ./server/backups:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
-      # The connection port for the ARK game client
       - 7777:7777/udp
-      # Raw UDP port (should always be game client port + 1)
-      - 7778:7778/udp
-      # Query port used to list servers on steam (Query Port cannot be between 27020 and 27050 due to Steam using those ports)
-      - 27015:27015/udp
-      # RCON management port
       - 27020:27020/tcp
     networks:
       - ark
     # Increase default grace period to ensure clean shutdown
-    stop_grace_period: 45s
+    stop_grace_period: 30s
     environment:
-      # ASA_APPID should only be changed if Wildcard provides a new one
-      ASA_APPID: 2430930
       SERVER_MAP: TheIsland_WP
-      # SESSION_NAME: 'mytempserverbossman'
       SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
       SERVER_PORT: 7777
-      QUERY_PORT: 27015
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30
-
-      # Comment to disable password
-      # SERVER_PASSWORD: aTempPassword
       ARK_ADMIN_PASSWORD: ab89EBHAEh5b
 
-      # Comment to disable RCON
       # If you disable RCON, the builtin manager won't work
       RCON_PORT: 27020
-
-      # Comment to enable BattlEye
-      DISABLE_BATTLEYE: 1
-
-      # Mods: Please provide a comma seperated list of the curse-forge modIDs and uncomment the MODS arg
-      # e.g. MODS=931872,931338
-      # MODS=
+      BATTLEYE: True
 
       # Extra arguments
       ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
-      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog -servergamelogincludetribelogs'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en'
       EVENT: 'WinterWonderland' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
     deploy:
       resources:

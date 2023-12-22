@@ -2,7 +2,8 @@
 set -e
 i=1
 echo "Here is a list of all your backup archives: "
-path="${ARK_DIR}/ShooterGame"
+path="/var/backups/asa-server"
+restore_path="${ARK_DIR}/ShooterGame/Saved"
 
 # list all files with a counter
 for datei in $(ls $path); do

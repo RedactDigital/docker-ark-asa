@@ -2,7 +2,7 @@
 # This file is called by manager.sh to start a new instance of ASA
 
 # Server main options
-cmd="${SERVER_MAP}?listen?SessionName=\"${SESSION_NAME}\"?Port=${SERVER_PORT}?QueryPort=${QUERY_PORT}"
+cmd="${SERVER_MAP}?listen?SessionName=\"${SESSION_NAME}\"?Port=${SERVER_PORT}"
 if [ -n "${MAX_PLAYERS}" ]; then
     cmd="${cmd}?MaxPlayers=${MAX_PLAYERS}"
 fi
@@ -27,12 +27,13 @@ if [ -n "$MODS" ]; then
     ark_flags="${ark_flags} -mods=${MODS}"
 fi
 
-ark_flags="${ark_flags} -log"
+ark_flags="${ark_flags} -log -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog -servergamelogincludetribelogs"
 
-if [ -n "${DISABLE_BATTLEYE}" ]; then
-    ark_flags="${ark_flags} -NoBattlEye"
+# If BATTLEYE is set to True, 1 or true start server with -UseBattlEye
+if [ "${BATTLEYE}" = "True" ] || [ "${BATTLEYE}" = "1" ] || [ "${BATTLEYE}" = "true" ]; then
+    ark_flags="${ark_flags} -UseBattlEye"
 else
-    ark_flags="${ark_flags} -BattlEye"
+    ark_flags="${ark_flags} -NoBattlEye"
 fi
 
 if [ -n "${MAX_PLAYERS}" ]; then
@@ -41,6 +42,8 @@ fi
 
 if [ -n ${EVENT} ]; then
     ark_flags="${ark_flags} -ActiveEvent=${EVENT}"
+else
+    ark_flags="${ark_flags} -ActiveEvent=None"
 fi
 
 ark_flags="${ark_flags} ${ARK_EXTRA_DASH_OPTS}"
@@ -49,4 +52,4 @@ ark_flags="${ark_flags} ${ARK_EXTRA_DASH_OPTS}"
 STEAM_COMPAT_DATA_PATH=$(eval echo "$STEAM_COMPAT_DATA_PATH")
 
 #starting server
-proton run "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.exe" ${cmd} ${ark_flags} >/dev/null 2>&1
+wine "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.exe" ${cmd} ${ark_flags} >/dev/null 2>&1

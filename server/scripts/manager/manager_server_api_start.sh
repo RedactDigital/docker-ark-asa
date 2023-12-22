@@ -27,12 +27,13 @@ if [ -n "$MODS" ]; then
     ark_flags="${ark_flags} -mods=${MODS}"
 fi
 
-ark_flags="${ark_flags} -log"
+ark_flags="${ark_flags} -log -ServerRCONOutputTribeLogs -gameplaylogging -servergamelog -servergamelogincludetribelogs"
 
-if [ -n "${DISABLE_BATTLEYE}" ]; then
-    ark_flags="${ark_flags} -NoBattlEye"
+# If BATTLEYE is set to True, 1 or true start server with -UseBattlEye
+if [ "${BATTLEYE}" = "True" ] || [ "${BATTLEYE}" = "1" ] || [ "${BATTLEYE}" = "true" ]; then
+    ark_flags="${ark_flags} -UseBattlEye"
 else
-    ark_flags="${ark_flags} -BattlEye"
+    ark_flags="${ark_flags} -NoBattlEye"
 fi
 
 if [ -n "${MAX_PLAYERS}" ]; then
@@ -41,6 +42,8 @@ fi
 
 if [ -n ${EVENT} ]; then
     ark_flags="${ark_flags} -ActiveEvent=${EVENT}"
+else
+    ark_flags="${ark_flags} -ActiveEvent=None"
 fi
 
 ark_flags="${ark_flags} ${ARK_EXTRA_DASH_OPTS}"
@@ -48,6 +51,5 @@ ark_flags="${ark_flags} ${ARK_EXTRA_DASH_OPTS}"
 #fix for docker compose exec / docker exec parsing inconsistencies
 STEAM_COMPAT_DATA_PATH=$(eval echo "$STEAM_COMPAT_DATA_PATH")
 
-#starting server and outputting log file
-#once we see "has successfully started" in the log file, we stop the server and start the asaapi
-protontricks-launch "${ARK_DIR}/ShooterGame/Binaries/Win64/AsaApiLoader.exe" ${cmd} ${ark_flags} vcrun2022 >/dev/null 2>&1 &
+#starting server
+wine "${ARK_DIR}/ShooterGame/Binaries/Win64/AsaApiLoader.exe" ${cmd} ${ark_flags} >/dev/null 2>&1 &

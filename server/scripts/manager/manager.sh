@@ -3,19 +3,22 @@ RCON_CMDLINE=(rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD})
 EOS_FILE=${MANAGER_DIR}/.eos.config
 
 get_and_check_pid() {
-    # Get PID
-    ark_pid=$(cat "$PID_FILE" 2>/dev/null)
-    if [[ -z "$ark_pid" ]]; then
-        echo "0"
+    # Check if ArkAscendedServer.exe is running, if it is return PID
+    ark_pid=$(pgrep -fl "ArkAscendedServer.exe" | grep "GameThread" | cut -d' ' -f1)
+    if [[ -n "$ark_pid" ]]; then
+        echo $ark_pid
         return
     fi
 
-    # Check process is still alive
-    if ps -p $ark_pid >/dev/null; then
-        echo "$ark_pid"
-    else
-        echo "0"
+    # Check if AsaApiLoader.exe is running, if it is return PID
+    ark_pid=$(pgrep -fl "AsaApiLoader.exe" | grep "AsaApiLoader" | cut -d' ' -f1)
+    if [[ -n "$ark_pid" ]]; then
+        echo $ark_pid
+        return
     fi
+
+    # If no PID found, return 0
+    echo "0"
 }
 
 full_status_setup() {
@@ -197,30 +200,27 @@ start() {
 
     # Start server in the background + nohup and save PID
     nohup ${MANAGER_DIR}/manager_server_start.sh >/dev/null 2>&1 &
-    ark_pid=$!
-    echo "$ark_pid" >"$PID_FILE"
     sleep 3
+
+    echo "Server should be up in a few minutes"
 }
 
 startApi() {
-    # Get server pid
+    # Check server not already running
     ark_pid=$(get_and_check_pid)
-    if [[ "$ark_pid" == 0 ]]; then
-
-        # Start server in the background + nohup and save PID
-        echo "Starting ASA API on port ${SERVER_PORT}"
-        echo "-------- STARTING API SERVER --------" >>"$LOG_FILE"
-        nohup ${MANAGER_DIR}/manager_server_api_start.sh >/dev/null 2>&1 &
-        ark_pid=$!
-        echo "$ark_pid" >"$PID_FILE"
-        sleep 3
-
-        echo "Server should be up in a few minutes"
-    else
+    if [[ "$ark_pid" != 0 ]]; then
         echo "Server is already running."
         return
     fi
 
+    # Start server in the background + nohup and save PID
+    echo "Starting ASA API on port ${SERVER_PORT}"
+    echo "-------- STARTING API SERVER --------" >>"$LOG_FILE"
+
+    nohup ${MANAGER_DIR}/manager_server_api_start.sh >/dev/null 2>&1 &
+    sleep 3
+
+    echo "Server should be up in a few minutes"
 }
 
 stop() {
@@ -245,7 +245,6 @@ stop() {
         gracefulStop
     fi
 
-    echo "" >"$PID_FILE"
     echo "-------- SERVER STOPPED --------" >>"$LOG_FILE"
 }
 
@@ -280,8 +279,21 @@ forceShutdown() {
 }
 
 restart() {
-    stop "$1"
-    start
+    # Check if ArkAscendedServer.exe is running, if it is we need to run the start command
+    ark_pid=$(pgrep -fl "ArkAscendedServer.exe" | grep "GameThread" | cut -d' ' -f1)
+    if [[ -n "$ark_pid" ]]; then
+        echo "Restarting server on port ${SERVER_PORT}"
+        stop "$1"
+        start
+    fi
+
+    # Check if AsaApiLoader.exe is running, if it is we need to run the startApi command
+    ark_pid=$(pgrep -fl "AsaApiLoader.exe" | grep "AsaApiLoader" | cut -d' ' -f1)
+    if [[ -n "$ark_pid" ]]; then
+        echo "Restarting ASA API on port ${SERVER_PORT}"
+        stop "$1"
+        startApi
+    fi
 }
 
 saveworld() {
@@ -374,8 +386,8 @@ main() {
     "start")
         start
         ;;
-    "startAPI")
-        startAPI
+    "startApi")
+        startApi
         ;;
     "stop")
         stop "$option"

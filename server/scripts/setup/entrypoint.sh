@@ -87,6 +87,10 @@ else
     fi
 fi
 
+#Create file for showing server logs
+mkdir -p "${LOG_FILE%/*}" && echo "" >"${LOG_FILE}"
+mkdir -p "${API_LOG_FILE%/*}" && echo "" >"${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi_648_2023-12-22_00-00.log"
+
 # Start server through manager
 # manager startApi &
 

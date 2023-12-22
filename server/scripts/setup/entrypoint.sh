@@ -4,7 +4,7 @@
 set -e
 
 # Install or update ASA server + verify installation
-# ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
+${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
 
 # Install Ark server API files
 LATEST_RELEASE=$(curl -s https://api.github.com/repos/ServersHub/ServerAPI/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')

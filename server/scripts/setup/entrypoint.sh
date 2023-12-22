@@ -4,7 +4,7 @@
 set -e
 
 # Install or update ASA server + verify installation
-${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
+# ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
 
 # Install Ark server API files
 LATEST_RELEASE=$(curl -s https://api.github.com/repos/ServersHub/ServerAPI/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
@@ -61,6 +61,11 @@ fi
 # Create archive dir for logs that we end up moving in the startup script
 if [[ ! -d "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive" ]]; then
     mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive"
+
+    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
+        echo "Archiving old logs"
+        mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
+    fi
 else
     if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
         echo "Archiving old logs"
@@ -70,16 +75,17 @@ fi
 
 if [[ ! -d "${ARK_DIR}/ShooterGame/Saved/Logs/Archive" ]]; then
     mkdir -p "${ARK_DIR}/ShooterGame/Saved/Logs/Archive"
+
+    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
+        echo "Archiving old logs"
+        mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
+    fi
 else
     if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
         echo "Archiving old logs"
         mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
     fi
 fi
-
-#Create file for showing server logs
-mkdir -p "${LOG_FILE%/*}" && echo "" >"${LOG_FILE}"
-mkdir -p "${API_LOG_FILE%/*}" && echo "" >"${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi_648_2023-12-22_00-00.log"
 
 # Start server through manager
 # manager startApi &
@@ -90,5 +96,7 @@ trap "manager stop --saveworld" SIGTERM
 # Start tail process in the background, then wait for tail to finish.
 # This is just a hack to catch SIGTERM signals, tail does not forward
 # the signals.
-tail -f ${LOG_FILE} ${API_LOG_FILE} &
+while ! tail -f ${LOG_FILE}; do sleep 1; done &
+while ! tail -f ${API_LOG_FILE}; do sleep 1; done &
+# tail -f --retry ${LOG_FILE} ${API_LOG_FILE} &
 wait $!

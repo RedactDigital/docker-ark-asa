@@ -29,7 +29,7 @@ else
 
     # Login game server hub atm requires a subscription to download the plugin,
     # so for the time being I'm going to download it manually and copy it to an s3 bucket
-    wget https://cloud.redact.digital/ark/ArkShop.zip
+    wget http://cloud.redact.digital/ark/ArkShop.zip
     unzip ArkShop.zip -d "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/"
     rm -rf ArkShop.zip
 fi

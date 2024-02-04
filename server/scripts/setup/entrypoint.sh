@@ -3,6 +3,21 @@
 #exit on error
 set -e
 
+# Create functions
+function installServerAPI() {
+    echo "Installing latest API ${LATEST_RELEASE}"
+    wget https://github.com/ServersHub/ServerAPI/releases/download/${LATEST_RELEASE}/AsaApi_${LATEST_RELEASE}.zip -O /tmp/AsaApiLoader.zip
+    unzip /tmp/AsaApiLoader.zip -d "${ARK_DIR}/ShooterGame/Binaries/Win64/"
+    rm -rf /tmp/AsaApiLoader.zip
+
+    if [[ ! -f "${ARK_DIR}/ShooterGame/Binaries/last_server_api_release.txt" ]]; then
+        rm -rf "${ARK_DIR}/ShooterGame/Binaries/last_server_api_release.txt"
+        echo "${LATEST_RELEASE}" >"${ARK_DIR}/ShooterGame/Binaries/last_server_api_release.txt"
+    else
+        echo "${LATEST_RELEASE}" >"${ARK_DIR}/ShooterGame/Binaries/last_server_api_release.txt"
+    fi
+}
+
 # Install or update ASA server + verify installation
 ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
 
@@ -14,12 +29,16 @@ if [[ -z "${LATEST_RELEASE}" ]]; then
 fi
 
 if [[ -f "${ARK_DIR}/ShooterGame/Binaries/Win64/AsaApiLoader.exe" ]]; then
-    echo "API already installed"
+    if [[ -f "${ARK_DIR}/ShooterGame/Binaries/last_server_api_release.txt" ]]; then
+        LAST_RELEASE=$(cat "${ARK_DIR}/ShooterGame/Binaries/last_server_api_release.txt")
+        if [[ "${LAST_RELEASE}" == "${LATEST_RELEASE}" ]]; then
+            echo "Server API is up to date"
+        else
+            installServerAPI
+        fi
+    fi
 else
-    echo "Installing API ${LATEST_RELEASE}"
-    wget https://github.com/ServersHub/ServerAPI/releases/download/${LATEST_RELEASE}/AsaApi_${LATEST_RELEASE}.zip -O /tmp/AsaApiLoader.zip
-    unzip /tmp/AsaApiLoader.zip -d "${ARK_DIR}/ShooterGame/Binaries/Win64/"
-    rm -rf /tmp/AsaApiLoader.zip
+    installServerAPI
 fi
 
 if [[ -f "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/ArkShop/ArkShop.dll" ]]; then

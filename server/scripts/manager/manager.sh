@@ -349,6 +349,20 @@ custom_rcon() {
 update() {
     echo "Updating ARK Ascended Server"
 
+    server_command=""
+
+    # Check if ArkAscendedServer.exe is running, if it is we need to run the start command
+    ark_pid=$(pgrep -fl "ArkAscendedServer.exe" | grep "GameThread" | cut -d' ' -f1)
+    if [[ -n "$ark_pid" ]]; then
+        server_command="start"
+    fi
+
+    # Check if AsaApiLoader.exe is running, if it is we need to run the startApi command
+    ark_pid=$(pgrep -fl "AsaApiLoader.exe" | grep "AsaApiLoader" | cut -d' ' -f1)
+    if [[ -n "$ark_pid" ]]; then
+        server_command="startApi"
+    fi
+
     stop --saveworld
     ${STEAMCMD_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} +quit
     # Remove unnecessary files (saves 6.4GB.., that will be re-downloaded next update)
@@ -358,7 +372,18 @@ update() {
     fi
 
     echo "Update completed"
-    start
+
+    # Check if server_command is start, then we need to run the start command
+    if [[ "$server_command" == "start" ]]; then
+        echo "Restarting server on port ${SERVER_PORT}"
+        start
+    fi
+
+    # Check if server_command is startApi, then we need to run the startApi command
+    if [[ "$server_command" == "startApi" ]]; then
+        echo "Restarting ASA API on port ${SERVER_PORT}"
+        startApi
+    fi
 }
 
 backup() {

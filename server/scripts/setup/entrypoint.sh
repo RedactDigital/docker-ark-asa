@@ -118,6 +118,7 @@ function installAdvancedMessagesPlugin {
     # which doesn't seem to be affecting the actual unzipping of the file
     set +e
     unzip "/tmp/AdvancedMessagesAscended.zip" -d "/tmp/AdvancedMessagesAscended"
+    set -e
 
     mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/AdvancedMessagesAscended"
 

@@ -228,12 +228,12 @@ fi
 if [[ ! -d "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive" ]]; then
     mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive"
 
-    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
+    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log 1>/dev/null 2>&1; then
         echo "Archiving old logs"
         mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
     fi
 else
-    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
+    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log 1>/dev/null 2>&1; then
         echo "Archiving old logs"
         mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
     fi
@@ -242,12 +242,12 @@ fi
 if [[ ! -d "${ARK_DIR}/ShooterGame/Saved/Logs/Archive" ]]; then
     mkdir -p "${ARK_DIR}/ShooterGame/Saved/Logs/Archive"
 
-    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
+    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/*.log 1>/dev/null 2>&1; then
         echo "Archiving old logs"
         mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
     fi
 else
-    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
+    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/*.log 1>/dev/null 2>&1; then
         echo "Archiving old logs"
         mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
     fi

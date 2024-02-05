@@ -270,4 +270,6 @@ trap "manager stop --saveworld" SIGTERM
 while ! tail -f ${LOG_FILE}; do sleep 1; done &
 while ! tail -f ${API_LOG_FILE}; do sleep 1; done &
 # tail -f --retry ${LOG_FILE} ${API_LOG_FILE} &
+
+echo -e "${GREEN}Server is ready${NC}. Use 'manager' command to manage the server."
 wait $!

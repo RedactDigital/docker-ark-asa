@@ -93,8 +93,9 @@ RUN set -ex; \
     mv rcon-0.10.3-amd64_linux/rcon ${USER_SCRIPTS}/rcon; \
     rm -rf rcon.tar.gz rcon-0.10.3-amd64_linux
 
-# Setup cron job to update the server every 24 hours
+# Setup cron job to update the server every 24 hours and backup the server every 6 hours
 RUN set -ex; \
+    echo "0 */6 * * * ${USER} manager backup" | crontab -; \
     echo "0 0 * * * ${USER} manager update" | crontab -
 
 # Copy scripts to run the server

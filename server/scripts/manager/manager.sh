@@ -208,7 +208,7 @@ start() {
     # if the server is not provided as an argument
     if [[ -z "$server_command" ]]; then
         options=("none" "start" "startApi")
-        instructions="Select which server you want to start after the update:"
+        instructions="Select which server you want to start:"
         source ${UTILS_DIR}/selector.sh
         Menu "${instructions}" "${options[@]}"
         server_command=${options[$?]}
@@ -386,13 +386,13 @@ update() {
     # Check if server_command is start, then we need to run the start command
     if [[ "$server_command" == "start" ]]; then
         echo "Restarting server on port ${SERVER_PORT}"
-        start
+        start "start"
     fi
 
     # Check if server_command is startApi, then we need to run the startApi command
     if [[ "$server_command" == "startApi" ]]; then
         echo "Restarting ASA API on port ${SERVER_PORT}"
-        startApi
+        start "startApi"
     fi
 }
 
@@ -463,7 +463,7 @@ main() {
         restoreBackup
         ;;
     *)
-        echo "Invalid action. Supported actions: status, start, startApi, stop, restart, saveworld, rcon, update, backup, restore."
+        echo "Invalid action. Supported actions: status, start, stop, restart, saveworld, rcon, update, backup, restore."
         exit 1
         ;;
     esac

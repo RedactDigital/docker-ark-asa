@@ -15,9 +15,10 @@ ENV UTILS_DIR ${BASE_DIR}/utils
 
 ENV ARK_DIR ${STEAM_DIR}/steamapps/common/asa-server
 
-# Proton variables
+# Wine variables
 ENV STEAM_COMPAT_CLIENT_INSTALL_PATH ${ARK_DIR}
 ENV STEAM_COMPAT_DATA_PATH ${STEAM_DIR}/steamapps/compatdata/${ASA_APPID}
+ENV WINEDEBUG -all
 
 # Log and pid file locations.
 ENV LOG_FILE ${ARK_DIR}/ShooterGame/Saved/Logs/ShooterGame.log

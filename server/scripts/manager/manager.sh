@@ -2,6 +2,13 @@
 RCON_CMDLINE=(rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD})
 EOS_FILE=${MANAGER_DIR}/.eos.config
 
+# Colors
+blue_text='\033[0;36m'
+bold_text='\033[1m'
+red_text='\033[0;31m'
+green_text='\033[0;32m'
+color_reset='\033[0m'
+
 get_and_check_pid() {
     # Check if ArkAscendedServer.exe is running, if it is return PID
     ark_pid=$(pgrep -fl "ArkAscendedServer.exe" | grep "GameThread" | cut -d' ' -f1)
@@ -188,66 +195,65 @@ status() {
 }
 
 start() {
+    server_command=$1
+
     # Check server not already running
     ark_pid=$(get_and_check_pid)
     if [[ "$ark_pid" != 0 ]]; then
-        echo "Server is already running."
+        echo -e "${red_text}Server is already running${color_reset}"
         return
     fi
 
+    # Promt user to select which server they want to start using the selector script
+    # if the server is not provided as an argument
+    if [[ -z "$server_command" ]]; then
+        options=("none" "start" "startApi")
+        instructions="Select which server you want to start after the update:"
+        source ${UTILS_DIR}/selector.sh
+        Menu "${instructions}" "${options[@]}"
+        server_command=${options[$?]}
+    fi
+
     if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
+        echo -e "${blue_text}Archiving old logs${color_reset}"
         mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
     fi
 
     if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
+        echo -e "${blue_text}Archiving old logs${color_reset}"
         mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
     fi
 
-    echo "Starting server on port ${SERVER_PORT}"
-    echo "-------- STARTING SERVER --------" >>"$LOG_FILE"
+    if [[ "$server_command" == "start" ]]; then
 
-    # Start server in the background + nohup and save PID
-    nohup ${MANAGER_DIR}/manager_server_start.sh >/dev/null 2>&1 &
-    sleep 3
+        echo -e "${green_text}Starting server on port ${SERVER_PORT}${color_reset}"
+        echo "-------- STARTING SERVER --------" >>"$LOG_FILE"
 
-    echo "Server should be up in a few minutes"
-}
-
-startApi() {
-    # Check server not already running
-    ark_pid=$(get_and_check_pid)
-    if [[ "$ark_pid" != 0 ]]; then
-        echo "Server is already running."
-        return
+        # Start server in the background + nohup and save PID
+        nohup ${MANAGER_DIR}/manager_server_start.sh >/dev/null 2>&1 &
+        sleep 3
+        echo -e "${green_text}Server should be up in a few minutes${color_reset}"
     fi
 
-    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
-        mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
+    if [[ "$server_command" == "startApi" ]]; then
+        echo -e "${green_text}Starting API server on port ${SERVER_PORT}${color_reset}"
+        echo "-------- STARTING API SERVER --------" >>"$LOG_FILE"
+
+        nohup ${MANAGER_DIR}/manager_server_api_start.sh >/dev/null 2>&1 &
+        sleep 3
+        echo -e "${green_text}API server should be up in a few minutes${color_reset}"
     fi
 
-    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
-        mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
+    if [[ "$server_command" == "none" ]]; then
+        echo -e "${red_text}No server selected${color_reset}"
     fi
-
-    # Start server in the background + nohup and save PID
-    echo "Starting ASA API on port ${SERVER_PORT}"
-    echo "-------- STARTING API SERVER --------" >>"$LOG_FILE"
-
-    nohup ${MANAGER_DIR}/manager_server_api_start.sh >/dev/null 2>&1 &
-    sleep 3
-
-    echo "Server should be up in a few minutes"
 }
 
 stop() {
     # Get server pid
     ark_pid=$(get_and_check_pid)
     if [[ "$ark_pid" == 0 ]]; then
-        echo "Server PID not found (server offline?)"
+        echo -e "${red_text}Server PID not found (server offline?)${color_reset}"
         return
     fi
 
@@ -257,7 +263,7 @@ stop() {
     if ([[ $res == 0 ]] && [[ "$out" != "No Players"* ]]); then
         num_players=$(echo "$out" | wc -l)
         if [[ "$num_players" -gt 0 ]]; then
-            echo "There are still $num_players players connected to the server."
+            echo -e "${red_text}Server is still running with $num_players players${color_reset}"
             echo "Please disconnect all players before stopping the server."
             return
         fi
@@ -270,7 +276,7 @@ stop() {
 
 gracefulStop() {
     ark_pid=$(get_and_check_pid)
-    echo "Stopping server gracefully..."
+    echo -e "${green_text}Server is running, stopping server gracefully...${color_reset}"
     echo "-------- STOPPING SERVER --------" >>"$LOG_FILE"
 
     saveworld
@@ -278,8 +284,8 @@ gracefulStop() {
     out=$(${RCON_CMDLINE[@]} DoExit 2>/dev/null)
     res=$?
     if [[ $res == 0 && "$out" == "Exiting..." ]]; then
-        echo "Success!"
-        echo "Waiting ${SERVER_SHUTDOWN_TIMEOUT}s for the server to stop"
+        echo -e "${green_text}success!${color_reset}"
+        echo -e "${green_text}Waiting ${blue_text}${SERVER_SHUTDOWN_TIMEOUT}s ${green_text}for the server to stop...${color_reset}"
         timeout $SERVER_SHUTDOWN_TIMEOUT tail --pid=$ark_pid -f /dev/null
         res=$?
 
@@ -293,7 +299,7 @@ gracefulStop() {
 
 forceShutdown() {
     ark_pid=$(get_and_check_pid)
-    echo "Forcing server shutdown"
+    echo -e "${red_text}Forcing server to stop...${color_reset}"
 
     kill $ark_pid
 }
@@ -302,9 +308,9 @@ restart() {
     # Check if ArkAscendedServer.exe is running, if it is we need to run the start command
     ark_pid=$(pgrep -fl "ArkAscendedServer.exe" | grep "GameThread" | cut -d' ' -f1)
     if [[ -n "$ark_pid" ]]; then
-        echo "Restarting server on port ${SERVER_PORT}"
+        echo -e "${green_text}Restarting server on port ${SERVER_PORT}${color_reset}"
         stop "$1"
-        start
+        start "start"
     fi
 
     # Check if AsaApiLoader.exe is running, if it is we need to run the startApi command
@@ -312,8 +318,12 @@ restart() {
     if [[ -n "$ark_pid" ]]; then
         echo "Restarting ASA API on port ${SERVER_PORT}"
         stop "$1"
-        startApi
+        start "startApi"
     fi
+
+    # If no server is running, we need to start the server we can just run the start command
+    start
+
 }
 
 saveworld() {
@@ -349,22 +359,22 @@ custom_rcon() {
 update() {
     echo "Updating ARK Ascended Server"
 
-    server_command=""
+    # Promt user to select which server they want to start using the selector script
+    options=("none" "start" "startApi")
+    instructions="Select which server you want to start after the update:"
+    source ${UTILS_DIR}/selector.sh
+    Menu "${instructions}" "${options[@]}"
+    server_command=${options[$?]}
 
-    # Check if ArkAscendedServer.exe is running, if it is we need to run the start command
-    ark_pid=$(pgrep -fl "ArkAscendedServer.exe" | grep "GameThread" | cut -d' ' -f1)
-    if [[ -n "$ark_pid" ]]; then
-        server_command="start"
+    # Check server not already running
+    ark_pid=$(get_and_check_pid)
+    if [[ "$ark_pid" != 0 ]]; then
+        echo "Server is running, saving world and stopping server"
+        stop --saveworld
+
     fi
 
-    # Check if AsaApiLoader.exe is running, if it is we need to run the startApi command
-    ark_pid=$(pgrep -fl "AsaApiLoader.exe" | grep "AsaApiLoader" | cut -d' ' -f1)
-    if [[ -n "$ark_pid" ]]; then
-        server_command="startApi"
-    fi
-
-    stop --saveworld
-    ${STEAMCMD_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} +quit
+    ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} +quit
     # Remove unnecessary files (saves 6.4GB.., that will be re-downloaded next update)
     if [[ -n "${REDUCE_IMAGE_SIZE}" ]]; then
         rm -rf ${ARK_DIR}/ShooterGame/Binaries/Win64/ArkAscendedServer.pdb
@@ -430,9 +440,6 @@ main() {
         ;;
     "start")
         start
-        ;;
-    "startApi")
-        startApi
         ;;
     "stop")
         stop "$option"

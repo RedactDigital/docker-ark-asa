@@ -11,6 +11,7 @@ ENV USER_SCRIPTS /home/${USER}/.local/bin
 
 ENV STEAM_DIR ${BASE_DIR}/steam
 ENV MANAGER_DIR ${BASE_DIR}/manager
+ENV UTILS_DIR ${BASE_DIR}/utils
 
 ENV ARK_DIR ${STEAM_DIR}/steamapps/common/asa-server
 
@@ -101,6 +102,7 @@ RUN set -ex; \
 # Copy scripts to run the server
 COPY --chown=${USER} --chmod=755 ./scripts/setup/entrypoint.sh /entrypoint.sh
 COPY --chown=${USER} --chmod=755 ./scripts/manager ${MANAGER_DIR}
+COPY --chown=${USER} --chmod=755 ./scripts/utils ${UTILS_DIR}
 
 # Create the symlink for the manager script. Linking to /usr/local/bin/manager allows us to run the script from anywhere
 USER root

@@ -58,7 +58,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./server/Saved:/opt/steam/steamapps/common/asa-server
-      - ./server/backups:/var/backups/asa-server
+      - ./server/backups/the-island:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
       - 7777:7777/udp
@@ -82,7 +82,44 @@ services:
       # Extra arguments
       ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
       ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ForceRespawnDinos'
-      EVENT: 'vday' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
+      EVENT: 'None' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
+    deploy:
+      resources:
+        limits:
+          memory: 12g
+    memswap_limit: 16g
+
+  theCenter:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server/Saved:/opt/steam/steamapps/common/asa-server
+      - ./server/backups/the-center:/var/backups/asa-server
+      - steam_data:/opt/steamcmd
+    ports:
+      - 7779:7779/udp
+      - 27022:27022/tcp
+    networks:
+      - ark
+    # Increase default grace period to ensure clean shutdown
+    stop_grace_period: 30s
+    environment:
+      SERVER_MAP: TheCenter
+      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
+      SERVER_PORT: 7779
+      MAX_PLAYERS: 70
+      SERVER_SHUTDOWN_TIMEOUT: 30
+      ARK_ADMIN_PASSWORD: ab89EBHAEh5b
+
+      # If you disable RCON, the builtin manager won't work
+      RCON_PORT: 27022
+      BATTLEYE: True
+
+      # Extra arguments
+      ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ForceRespawnDinos'
+      EVENT: 'None' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
     deploy:
       resources:
         limits:

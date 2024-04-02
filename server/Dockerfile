@@ -22,7 +22,7 @@ ENV WINEDEBUG -all
 
 # Log and pid file locations.
 ENV LOG_FILE ${ARK_DIR}/ShooterGame/Saved/Logs/ShooterGame.log
-ENV API_LOG_FILE ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi_*
+ENV API_LOG_FILE ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi*.log
 
 # Because steam is a 32 bit app, we need to add the i386 architecture
 RUN set -ex; \
@@ -42,8 +42,7 @@ RUN set -ex; \
     dbus \
     lib32gcc-s1 \
     vim \
-    unzip \
-    cron;
+    unzip;
 
 # Add the winehq repository and install
 RUN set -ex; \
@@ -94,11 +93,6 @@ RUN set -ex; \
     tar xvf rcon.tar.gz; \
     mv rcon-0.10.3-amd64_linux/rcon ${USER_SCRIPTS}/rcon; \
     rm -rf rcon.tar.gz rcon-0.10.3-amd64_linux
-
-# Setup cron job to update the server every 24 hours and backup the server every 6 hours
-RUN set -ex; \
-    echo "0 */6 * * * ${USER} manager backup" | crontab -; \
-    echo "0 0 * * * ${USER} manager update" | crontab -
 
 # Copy scripts to run the server
 COPY --chown=${USER} --chmod=755 ./scripts/setup/entrypoint.sh /entrypoint.sh

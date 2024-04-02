@@ -89,7 +89,7 @@ services:
           memory: 12g
     memswap_limit: 16g
 
-  scorchedEarth:
+  scorched-earth:
     build:
       context: ./server
       dockerfile: Dockerfile

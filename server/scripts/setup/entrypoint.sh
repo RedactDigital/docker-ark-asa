@@ -49,7 +49,7 @@ function installArkShopPlugin {
     echo -e "Installing latest ArkShop ${GREEN}${LATEST_RELEASE}${NC}"
     # Login game server hub atm requires a subscription to download the plugin,
     # so for the time being I'm going to download it manually and copy it to an s3 bucket
-    wget "http://cloud.redact.digital/ark/ArkShop_${LATEST_RELEASE}.zip" -O /tmp/ArkShop.zip
+    wget "http://cdn.redact.digital/ark/ArkShop_${LATEST_RELEASE}.zip" -O /tmp/ArkShop.zip
     unzip /tmp/ArkShop.zip -d /tmp/ArkShop
 
     mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/ArkShop"
@@ -81,7 +81,7 @@ function installTurretManagerPlugin {
     echo -e "Installing latest TurretManager ${GREEN}${LATEST_RELEASE}${NC}"
     # Login game server hub atm requires a subscription to download the plugin,
     # so for the time being I'm going to download it manually and copy it to an s3 bucket
-    wget "http://cloud.redact.digital/ark/TurretManagerFREE${LATEST_RELEASE}.zip" -O /tmp/TurretManager.zip
+    wget "http://cdn.redact.digital/ark/TurretManagerFREE${LATEST_RELEASE}.zip" -O /tmp/TurretManager.zip
     unzip /tmp/TurretManager.zip -d /tmp/TurretManager
 
     mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/TurretManagerFree"
@@ -112,7 +112,7 @@ function installAdvancedMessagesPlugin {
     echo -e "Installing latest AdvancedMessages ${GREEN}${LATEST_RELEASE}${NC}"
     # Login game server hub atm requires a subscription to download the plugin,
     # so for the time being I'm going to download it manually and copy it to an s3 bucket
-    wget "http://cloud.redact.digital/ark/AdvancedMessagesAscended_${LATEST_RELEASE}.zip" -O "/tmp/AdvancedMessagesAscended.zip"
+    wget "http://cdn.redact.digital/ark/AdvancedMessagesAscended_${LATEST_RELEASE}.zip" -O "/tmp/AdvancedMessagesAscended.zip"
 
     # Turn off error checking for this command becaues it keeps giving the "appears to use backslashes as path separators" error
     # which doesn't seem to be affecting the actual unzipping of the file
@@ -143,7 +143,7 @@ function installAdvancedMessagesPlugin {
 }
 
 # Install or update ASA server + verify installation
-${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
+# ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
 
 # Find latest release of Server API
 ARK_SERVER_API_LATEST_RELEASE=$(curl -s https://api.github.com/repos/ServersHub/ServerAPI/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
@@ -230,12 +230,12 @@ if [[ ! -d "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive" ]]; then
     mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive"
 
     if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
+        echo -e "${RED}Archiving old logs${NC}"
         mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
     fi
 else
     if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
+        echo -e "${RED}Archiving old logs${NC}"
         mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
     fi
 fi
@@ -244,32 +244,28 @@ if [[ ! -d "${ARK_DIR}/ShooterGame/Saved/Logs/Archive" ]]; then
     mkdir -p "${ARK_DIR}/ShooterGame/Saved/Logs/Archive"
 
     if ls ${ARK_DIR}/ShooterGame/Saved/Logs/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
+        echo -e "${RED}Archiving old logs${NC}"
         mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
     fi
 else
     if ls ${ARK_DIR}/ShooterGame/Saved/Logs/*.log 1>/dev/null 2>&1; then
-        echo "Archiving old logs"
+        echo -e "${RED}Archiving old logs${NC}"
         mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
     fi
 fi
 
 #Create file for showing server logs
-mkdir -p "${LOG_FILE%/*}" && echo "" >"${LOG_FILE}"
-mkdir -p "${API_LOG_FILE%/*}" && echo "" >"${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi_648_2023-12-22_00-00.log"
+mkdir -p "${LOG_FILE%/*}" && echo "Start of File" >"${LOG_FILE}"
+mkdir -p "${API_LOG_FILE%/*}" && echo "Start of File" >"${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi_648_2023-12-22_00-00.log"
 
 # Start server through manager
 # manager startApi &
 
 # Register SIGTERM handler to stop server gracefully
 trap "manager stop --saveworld" SIGTERM
-
-# Start tail process in the background, then wait for tail to finish.
-# This is just a hack to catch SIGTERM signals, tail does not forward
-# the signals.
-while ! tail -f ${LOG_FILE}; do sleep 1; done &
-while ! tail -f ${API_LOG_FILE}; do sleep 1; done &
-# tail -f --retry ${LOG_FILE} ${API_LOG_FILE} &
-
 echo -e "${GREEN}Server is ready${NC}. Use 'manager' command to manage the server."
+
+# Create a custom loop to log the log file and api log file output
+tail -f ${LOG_FILE} ${API_LOG_FILE} &
+
 wait $!

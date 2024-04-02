@@ -69,7 +69,7 @@ services:
     stop_grace_period: 30s
     environment:
       SERVER_MAP: TheIsland_WP
-      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS'
+      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS - The Island'
       SERVER_PORT: 7777
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30
@@ -106,7 +106,7 @@ services:
     stop_grace_period: 30s
     environment:
       SERVER_MAP: ScorchedEarth_WP
-      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS'
+      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS - Scorched Earth'
       SERVER_PORT: 7779
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30

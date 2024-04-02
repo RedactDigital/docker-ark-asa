@@ -25,7 +25,7 @@ ENV LOG_FILE ${ARK_DIR}/ShooterGame/Saved/Logs/ShooterGame.log
 ENV API_LOG_FILE ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi*.log
 
 # Add alias to the bashrc
-RUN set -ex; echo "alias follow='tail -f ${LOG_FILE} ${API_LOG_FILE}'" >> /root/.bashrc
+RUN set -ex; echo "alias follow='tail -f ${LOG_FILE} ${API_LOG_FILE}'" >> /home/${USER}/.bashrc
 
 # Because steam is a 32 bit app, we need to add the i386 architecture
 RUN set -ex; \

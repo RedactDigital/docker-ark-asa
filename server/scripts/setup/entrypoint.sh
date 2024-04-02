@@ -150,7 +150,7 @@ ARK_SERVER_API_LATEST_RELEASE=$(curl -s https://api.github.com/repos/ServersHub/
 if [[ -z "${ARK_SERVER_API_LATEST_RELEASE}" ]]; then
     echo -e "${RED}Failed to get latest release from GitHub API${NC}"
     exit 1
-fiWW
+fi
 
 # Server API
 if [[ -f "${ARK_DIR}/ShooterGame/Binaries/Win64/AsaApiLoader.exe" ]]; then
@@ -265,6 +265,8 @@ mkdir -p "${API_LOG_FILE%/*}" && echo "Start of File" >"${ARK_DIR}/ShooterGame/B
 trap "manager stop --saveworld" SIGTERM
 echo -e "${GREEN}------------------------ Server is ready${NC}. Use 'manager' command to manage the server. ${GREEN}------------------------${NC}"
 
-tail -f ${LOG_FILE} &
+while ! tail -f ${LOG_FILE}; do
+    sleep 1
+done &
 
 wait $!

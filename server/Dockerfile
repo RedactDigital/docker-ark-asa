@@ -24,9 +24,6 @@ ENV WINEDEBUG -all
 ENV LOG_FILE ${ARK_DIR}/ShooterGame/Saved/Logs/ShooterGame.log
 ENV API_LOG_FILE ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi*.log
 
-# Add alias to the bashrc
-RUN set -ex; echo "alias follow='tail -f ${LOG_FILE} ${API_LOG_FILE}'" >> /home/${USER}/.bashrc
-
 # Because steam is a 32 bit app, we need to add the i386 architecture
 RUN set -ex; \
     dpkg --add-architecture i386
@@ -82,6 +79,7 @@ USER ${USER}
 # Add the ll alias. This is just a convenience thing just in case we have an image without it
 RUN set -ex; echo "alias ll='ls -alF'" >> /home/${USER}/.bashrc
 RUN set -ex; echo "export PATH='$PATH:/home/${USER}/.local/bin'" >> /home/${USER}/.bashrc
+RUN set -ex; echo "alias ark='tail -f ${LOG_FILE} ${API_LOG_FILE}'" >> /home/${USER}/.bashrc
 
 # Download steamcmd
 WORKDIR ${STEAM_DIR}

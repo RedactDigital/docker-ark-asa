@@ -49,7 +49,7 @@ function installArkShopPlugin {
     echo -e "Installing latest ArkShop ${GREEN}${LATEST_RELEASE}${NC}"
     # Login game server hub atm requires a subscription to download the plugin,
     # so for the time being I'm going to download it manually and copy it to an s3 bucket
-    wget "http://cdn.redact.digital/ark/ArkShop_${LATEST_RELEASE}.zip" -O /tmp/ArkShop.zip
+    wget "https://cdn.redact.digital/ark/ArkShop_${LATEST_RELEASE}.zip" -O /tmp/ArkShop.zip
     unzip /tmp/ArkShop.zip -d /tmp/ArkShop
 
     mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/ArkShop"
@@ -150,7 +150,7 @@ ARK_SERVER_API_LATEST_RELEASE=$(curl -s https://api.github.com/repos/ServersHub/
 if [[ -z "${ARK_SERVER_API_LATEST_RELEASE}" ]]; then
     echo -e "${RED}Failed to get latest release from GitHub API${NC}"
     exit 1
-fi
+fiWW
 
 # Server API
 if [[ -f "${ARK_DIR}/ShooterGame/Binaries/Win64/AsaApiLoader.exe" ]]; then

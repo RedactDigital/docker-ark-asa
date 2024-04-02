@@ -69,7 +69,7 @@ services:
     stop_grace_period: 30s
     environment:
       SERVER_MAP: TheIsland_WP
-      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly The Island'
+      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
       SERVER_PORT: 7777
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30
@@ -81,7 +81,7 @@ services:
 
       # Extra arguments
       ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
-      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ForceRespawnDinos'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ForceRespawnDinos -clusterid=yinzers'
       EVENT: 'vday' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
     deploy:
       resources:
@@ -106,7 +106,7 @@ services:
     stop_grace_period: 30s
     environment:
       SERVER_MAP: ScorchedEarth_WP
-      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly Scorched Earth'
+      SESSION_NAME: '[US] YINZERS x10 PVP Wipe Quarterly'
       SERVER_PORT: 7779
       MAX_PLAYERS: 70
       SERVER_SHUTDOWN_TIMEOUT: 30
@@ -118,7 +118,7 @@ services:
 
       # Extra arguments
       ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
-      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ForceRespawnDinos'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ForceRespawnDinos -clusterid=yinzers'
       EVENT: 'vday' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
     deploy:
       resources:

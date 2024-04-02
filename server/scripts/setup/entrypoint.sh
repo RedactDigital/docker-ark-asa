@@ -146,11 +146,7 @@ function installAdvancedMessagesPlugin {
 ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
 
 # Find latest release of Server API
-ARK_SERVER_API_LATEST_RELEASE=$(curl -s https://api.github.com/repos/ServersHub/ServerAPI/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
-if [[ -z "${ARK_SERVER_API_LATEST_RELEASE}" ]]; then
-    echo -e "${RED}Failed to get latest release from GitHub API${NC}"
-    exit 1
-fi
+ARK_SERVER_API_LATEST_RELEASE=1.15
 
 # Server API
 if [[ -f "${ARK_DIR}/ShooterGame/Binaries/Win64/AsaApiLoader.exe" ]]; then

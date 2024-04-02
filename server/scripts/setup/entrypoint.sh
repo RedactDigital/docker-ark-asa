@@ -143,7 +143,7 @@ function installAdvancedMessagesPlugin {
 }
 
 # Install or update ASA server + verify installation
-# ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
+${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} validate +@sSteamCmdForcePlatformType windows +quit
 
 # Find latest release of Server API
 ARK_SERVER_API_LATEST_RELEASE=$(curl -s https://api.github.com/repos/ServersHub/ServerAPI/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
@@ -263,9 +263,8 @@ mkdir -p "${API_LOG_FILE%/*}" && echo "Start of File" >"${ARK_DIR}/ShooterGame/B
 
 # Register SIGTERM handler to stop server gracefully
 trap "manager stop --saveworld" SIGTERM
-echo -e "${GREEN}Server is ready${NC}. Use 'manager' command to manage the server."
+echo -e "${GREEN}------------------------ Server is ready${NC}. Use 'manager' command to manage the server. ${GREEN}------------------------${NC}"
 
-# Create a custom loop to log the log file and api log file output
-tail -f ${LOG_FILE} ${API_LOG_FILE} &
+tail -f ${LOG_FILE} &
 
 wait $!

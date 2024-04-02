@@ -12,7 +12,7 @@ function installServerAPI {
     LATEST_RELEASE=$1
 
     echo -e "Installing latest API ${GREEN}${LATEST_RELEASE}${NC}"
-    wget https://github.com/ServersHub/ServerAPI/releases/download/${LATEST_RELEASE}/AsaApi_${LATEST_RELEASE}.zip -O /tmp/AsaApi.zip
+    wget https://cdn.redact.digital/ark/AsaApi_${LATEST_RELEASE}.zip -O /tmp/AsaApi.zip
 
     mkdir -p /tmp/AsaApi
     unzip /tmp/AsaApi.zip -d /tmp/AsaApi

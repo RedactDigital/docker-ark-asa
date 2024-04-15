@@ -19,6 +19,10 @@ if [ -n "${RCON_PORT}" ]; then
     cmd="${cmd}?RCONEnabled=True?RCONPort=${RCON_PORT}"
 fi
 
+if [ -n ${QUERY_PORT} ]; then
+    cmd="${cmd}?QueryPort=${QUERY_PORT}"
+fi
+
 cmd="${cmd}${ARK_EXTRA_OPTS}"
 
 # Server dash options

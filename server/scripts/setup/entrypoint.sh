@@ -221,35 +221,6 @@ else
     installAdvancedMessagesPlugin "${ADVANCED_MESSAGES_LATEST_RELEASE}"
 fi
 
-# Create archive dir for logs that we end up moving in the startup script
-if [[ ! -d "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive" ]]; then
-    mkdir -p "${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive"
-
-    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log 1>/dev/null 2>&1; then
-        echo -e "${RED}Archiving old logs${NC}"
-        mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
-    fi
-else
-    if ls ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log 1>/dev/null 2>&1; then
-        echo -e "${RED}Archiving old logs${NC}"
-        mv ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/*.log ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/Archive/
-    fi
-fi
-
-if [[ ! -d "${ARK_DIR}/ShooterGame/Saved/Logs/Archive" ]]; then
-    mkdir -p "${ARK_DIR}/ShooterGame/Saved/Logs/Archive"
-
-    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/*.log 1>/dev/null 2>&1; then
-        echo -e "${RED}Archiving old logs${NC}"
-        mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
-    fi
-else
-    if ls ${ARK_DIR}/ShooterGame/Saved/Logs/*.log 1>/dev/null 2>&1; then
-        echo -e "${RED}Archiving old logs${NC}"
-        mv ${ARK_DIR}/ShooterGame/Saved/Logs/*.log ${ARK_DIR}/ShooterGame/Saved/Logs/Archive/
-    fi
-fi
-
 #Create file for showing server logs
 mkdir -p "${LOG_FILE%/*}" && echo "Start of File" >"${LOG_FILE}"
 mkdir -p "${API_LOG_FILE%/*}" && echo "Start of File" >"${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi_648_2023-12-22_00-00.log"

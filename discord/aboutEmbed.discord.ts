@@ -6,7 +6,7 @@ export default async (server: Guild): Promise<void> => {
   const aboutChannel = <TextChannel | null>await server.channels.fetch('1168456964116840580');
   if (!aboutChannel) throw new Error('Rules channel not found');
 
-  const embed = new EmbedBuilder()
+  const aboutEmbed = new EmbedBuilder()
     .setColor('#ff8f00')
     .setTitle('Game Config')
     .setDescription(
@@ -29,6 +29,24 @@ export default async (server: Guild): Promise<void> => {
         `,
     );
 
+  const shopCommandsEmbed = new EmbedBuilder()
+    .setColor('#18D93F')
+    .setTitle('Shop Commands')
+    .setDescription(
+      `
+**/points** - Shows your current points.
+**/buy  <ID>  <Amount>** - Buys an item.
+**/trade  <'CharacterName'>  <Amount>** - Sends points to another player. The name must be in single quotes.
+**/kit** - Shows a list of available kits.
+**/kit  <KitName>** - Redeems a kit.
+**/buykit  <KitName>  <Amount>** - Buys a kit.
+**/shop  <Page>** - Shows a list of available items.
+**/sell  <ID>  <Amount>** - Sells an item.
+**/shopsell <Page>** - Shows a list of items you can sell.
+**/shopfind <SearchTerm> <Page>** - Shows a list of items that match the search term.
+        `,
+    );
+
   const messages = await aboutChannel.messages.fetch();
   const message = messages.get('1173437452510298172');
   if (!message) throw new Error('Discord message not found');
@@ -37,6 +55,6 @@ export default async (server: Guild): Promise<void> => {
 This is a vibrant community for those passionate about the online survival game, Ark.
 We host servers with curated rules and settings to provide enjoyable gameplay with a focus on fair PvP. We also offer different donor tiers with various perks to support the server. Whether you're a beginner or an experienced survivor, you're welcome to join us, participate in discussions, and contribute to our growing community.
   `,
-    embeds: [embed],
+    embeds: [aboutEmbed, shopCommandsEmbed],
   });
 };

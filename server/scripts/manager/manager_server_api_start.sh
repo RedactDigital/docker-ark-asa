@@ -44,6 +44,10 @@ if [ -n "${MAX_PLAYERS}" ]; then
     ark_flags="${ark_flags} -WinLiveMaxPlayers=${MAX_PLAYERS}"
 fi
 
+if [ -n "${CLUSTER}" ]; then
+    ark_flags="${ark_flags} -clusterid=${CLUSTER}"
+fi
+
 if [ -n ${EVENT} ]; then
     ark_flags="${ark_flags} -ActiveEvent=${EVENT}"
 else

@@ -136,6 +136,48 @@ services:
           memory: 12g
     memswap_limit: 16g
 
+  the-center:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server/Saved:/opt/steam/steamapps/common/asa-server
+      - ./server/backups/the-center:/var/backups/asa-server
+      - steam_data:/opt/steamcmd
+    ports:
+      - 7781:7781/udp
+      - 7782:7782/udp
+      - 27019:27019/udp
+      - 27024:27024/tcp
+    networks:
+      - ark
+    # Increase default grace period to ensure clean shutdown
+    stop_grace_period: 30s
+    environment:
+      SERVER_MAP: TheCenter_WP
+      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS - TheCenter'
+      SERVER_PORT: 7781
+      RAW_PORT: 7782
+      QUERY_PORT: 27019
+      MAX_PLAYERS: 70
+      SERVER_SHUTDOWN_TIMEOUT: 30
+      ARK_ADMIN_PASSWORD: ab89EBHAEh5b
+      CLUSTER: 'yinzers'
+
+      # If you disable RCON, the builtin manager won't work
+      RCON_PORT: 27024
+      BATTLEYE: 'True'
+
+      # Extra arguments
+      ARK_EXTRA_OPTS: '?OverrideOfficialDifficulty=5.0?AllowCrateSpawnsOnTopOfStructures=true?AllowFlyingStaminaRecovery=true?ShowFloatingDamageText=true?MaxPersonalTamedDinos=500'
+      ARK_EXTRA_DASH_OPTS: '-NoTransferFromFiltering -ForceAllowCaveFlyers -usecache -crossplay -culture=en -ForceRespawnDinos'
+      EVENT: 'Summer' # Easter, Arkaeology, ExtinctionChronicles, WinterWonderland, vday, Summer, FearEvolved, TurkeyTrial, birthday, None
+    deploy:
+      resources:
+        limits:
+          memory: 12g
+    memswap_limit: 16g
+
   # db:
   #   image: mysql:8.0
   #   restart: unless-stopped

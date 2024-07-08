@@ -71,7 +71,7 @@ services:
     stop_grace_period: 30s
     environment:
       SERVER_MAP: TheIsland_WP
-      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS - The Island'
+      SESSION_NAME: 'PvP - YINZERS - The Island'
       SERVER_PORT: 7777
       RAW_PORT: 7778
       QUERY_PORT: 27015
@@ -113,7 +113,7 @@ services:
     stop_grace_period: 30s
     environment:
       SERVER_MAP: ScorchedEarth_WP
-      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS - Scorched Earth'
+      SESSION_NAME: 'PvP - YINZERS - Scorched Earth'
       SERVER_PORT: 7779
       RAW_PORT: 7780
       QUERY_PORT: 27017
@@ -155,7 +155,7 @@ services:
     stop_grace_period: 30s
     environment:
       SERVER_MAP: TheCenter_WP
-      SESSION_NAME: '[US] 10x Fresh Wipe PvP - YINZERS - TheCenter'
+      SESSION_NAME: 'PvP - YINZERS - TheCenter'
       SERVER_PORT: 7781
       RAW_PORT: 7782
       QUERY_PORT: 27019

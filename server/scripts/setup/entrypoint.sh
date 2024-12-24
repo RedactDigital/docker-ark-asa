@@ -143,7 +143,7 @@ function installAdvancedMessagesPlugin {
 }
 
 # Install or update ASA server + verify installation
-# ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} +quit
+${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} +quit
 
 # Find latest release of Server API
 ARK_SERVER_API_LATEST_RELEASE=1.17

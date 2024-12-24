@@ -60,7 +60,7 @@ function installArkShopPlugin {
     mv -f /tmp/ArkShop/ArkShop/Commented.json "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/ArkShop/Commented.json"
 
     if [[ ! -f "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/ArkShop/config.json" ]]; then
-        mv -f /tmp/ArkShop/ArkShop/Config.json "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/ArkShop/config.json"
+        mv -f /tmp/ArkShop/ArkShop/config.json "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/ArkShop/config.json"
     fi
 
     rm -rf /tmp/ArkShop.zip
@@ -91,7 +91,7 @@ function installTurretManagerPlugin {
     mv -f /tmp/TurretManager/TurretManagerFree/PluginInfo.json "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/TurretManagerFree/PluginInfo.json"
 
     if [[ ! -f "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/TurretManagerFree/config.json" ]]; then
-        mv -f /tmp/TurretManager/TurretManagerFree/Config.json "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/TurretManagerFree/config.json"
+        mv -f /tmp/TurretManager/TurretManagerFree/config.json "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/TurretManagerFree/config.json"
     fi
 
     rm -rf /tmp/TurretManager.zip
@@ -219,6 +219,11 @@ if [[ -f "${ARK_DIR}/ShooterGame/Binaries/Win64/ArkApi/Plugins/AdvancedMessagesA
     fi
 else
     installAdvancedMessagesPlugin "${ADVANCED_MESSAGES_LATEST_RELEASE}"
+fi
+
+# If command is provided, run it
+if [ $# -gt 0 ]; then
+    exec "$@"
 fi
 
 #Create file for showing server logs

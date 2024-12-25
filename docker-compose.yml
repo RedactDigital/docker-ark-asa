@@ -58,6 +58,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./server/Saved:/opt/steam/steamapps/common/asa-server
+      - ./server/logs/island-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Saved/Logs
+      - ./server/logs/island-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Binaries/Win64/logs
       - ./server/backups/the-island:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
@@ -100,6 +102,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./server/Saved:/opt/steam/steamapps/common/asa-server
+      - ./server/logs/scorched-earth-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Saved/Logs
+      - ./server/logs/scorched-earth-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Binaries/Win64/logs
       - ./server/backups/the-center:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
@@ -142,6 +146,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./server/Saved:/opt/steam/steamapps/common/asa-server
+      - ./server/logs/the-center-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Saved/Logs
+      - ./server/logs/the-center-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Binaries/Win64/logs
       - ./server/backups/the-center:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
@@ -184,6 +190,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./server/Saved:/opt/steam/steamapps/common/asa-server
+      - ./server/logs/extinction-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Saved/Logs
+      - ./server/logs/extinction-logs:/opt/steam/steamapps/common/asa-server/ShooterGame/Binaries/Win64/logs
       - ./server/backups/extinction:/var/backups/asa-server
       - steam_data:/opt/steamcmd
     ports:
@@ -220,28 +228,28 @@ services:
           memory: 12g
     memswap_limit: 16g
 
-  # db:
-  #   image: mysql:8.0
-  #   restart: unless-stopped
-  #   environment:
-  #     MYSQL_DATABASE: app
-  #     MYSQL_ROOT_PASSWORD: password
-  #     MYSQL_PASSWORD: password
-  #     MYSQL_USER: app
-  #     SERVICE_TAGS: dev
-  #     SERVICE_NAME: mysql
-  #   healthcheck:
-  #     test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-  #     interval: 5s
-  #     timeout: 30s
-  #     retries: 3
-  #     start_period: 5s
-  #   volumes:
-  #     - /var/lib/mysql
-  #   ports:
-  #     - 3306:3306
-  #   networks:
-  #     - ark
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_PASSWORD: password
+      MYSQL_USER: app
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 5s
+      timeout: 30s
+      retries: 3
+      start_period: 5s
+    volumes:
+      - /var/lib/mysql
+    # ports:
+    #   - 3306:3306
+    networks:
+      - ark
 
   # redis:
   #   image: redis:alpine

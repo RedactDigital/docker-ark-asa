@@ -24,6 +24,7 @@ ENV WINEDEBUG -all
 ENV LOG_FILE ${ARK_DIR}/ShooterGame/Saved/Logs/ShooterGame.log
 ENV GAME_LOG_FILE ${ARK_DIR}/ShooterGame/Saved/Logs/ServerGame.*.log
 ENV API_LOG_FILE ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/ArkApi_*.log
+ENV WINE_LOG_FILE ${ARK_DIR}/ShooterGame/Binaries/Win64/logs/wine.log
 
 # Because steam is a 32 bit app, we need to add the i386 architecture
 RUN set -ex; \

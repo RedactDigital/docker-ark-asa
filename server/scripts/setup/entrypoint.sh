@@ -266,7 +266,7 @@ tail_logs() {
             tail -F "${LOG_FILE}" &
         fi
 
-        for log_pattern in "${GAME_LOG_FILE}" "${API_LOG_FILE}"; do
+        for log_pattern in "${GAME_LOG_FILE}" "${API_LOG_FILE}" "${WINE_LOG_FILE}"; do
             # Use ls -t to sort files by modification time and head -n 1 to get the most recent one
             latest_log=$(ls -t "${log_pattern}" 2>/dev/null | head -n 1)
             # Check if a latest_log was found

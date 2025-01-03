@@ -196,6 +196,13 @@ function installServerAPI {
 #     fi
 # }
 
+# If command is provided, run it
+# The reason this is here is because comonly the next step fails, so I would like to be
+# able to run commands and such to troubleshoot before this command happens IE docker run -it bash
+if [ $# -gt 0 ]; then
+    exec "$@"
+fi
+
 # Install or update ASA server + verify installation
 ${STEAM_DIR}/steamcmd.sh +force_install_dir ${ARK_DIR} +login anonymous +app_update ${ASA_APPID} +quit
 
@@ -242,11 +249,6 @@ for plugin in "${plugins[@]}"; do
         install_plugin "${plugin}" "${latest_release}" "${url}" "${destination}" additional_files[@]
     fi
 done
-
-# If command is provided, run it
-if [ $# -gt 0 ]; then
-    exec "$@"
-fi
 
 # Start server through manager
 # manager startApi &

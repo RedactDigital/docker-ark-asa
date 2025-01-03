@@ -53,6 +53,13 @@ RUN set -ex; \
     apt update; \
     apt install -y --install-recommends winehq-stable
 
+# Install Microsoft Visual C++ 2022 Redistributable
+# This is used for the ArkApi plugin
+RUN set -ex; \
+    wget -O vcredist_x64.exe https://aka.ms/vs/17/release/vc_redist.x64.exe; \
+    wine vcredist_x64.exe /install /quiet /norestart; \
+    rm vcredist_x64.exe
+
 # Install Cleanup
 RUN set -ex; \
     apt-get -y autoremove; \

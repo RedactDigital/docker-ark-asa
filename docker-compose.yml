@@ -92,7 +92,6 @@ services:
       resources:
         limits:
           memory: 12g
-    memswap_limit: 16g
 
   scorched-earth:
     build:
@@ -136,7 +135,6 @@ services:
       resources:
         limits:
           memory: 12g
-    memswap_limit: 16g
 
   the-center:
     build:
@@ -180,7 +178,6 @@ services:
       resources:
         limits:
           memory: 12g
-    memswap_limit: 16g
 
   extinction:
     build:
@@ -223,8 +220,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 12g
-    memswap_limit: 16g
+          memory: 20g
 
   abberation:
     build:
@@ -268,7 +264,6 @@ services:
       resources:
         limits:
           memory: 12g
-    memswap_limit: 16g
 
   db:
     image: mysql:8.0

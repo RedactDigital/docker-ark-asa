@@ -44,7 +44,8 @@ RUN set -ex; \
     dbus \
     lib32gcc-s1 \
     vim \
-    unzip;
+    unzip \
+    winetricks;
 
 # Add the winehq repository and install
 RUN set -ex; \
